@@ -2,6 +2,10 @@
 
 Date : 18 octobre 2026. Produit indépendant : **Atelier**.
 
+L’extension du catalogue et le parcours redline s’inspirent des capacités publiques de rédaction et de travail dans Word présentées par [Legora Workflows](https://legora.com/product/workflows) et [Legora pour les opérations](https://legora.com/solutions/ma), consultées le 18 octobre 2026. Aucune bibliothèque privée de modèles Legora n’a été consultée ni reproduite. Les seize trames sont des rédactions indépendantes et ne revendiquent pas une validation par Legora ou un avocat.
+
+Les nouvelles références publiques incluent les pages CNIL sur [l’encadrement responsable/sous-traitant](https://www.cnil.fr/fr/clauses-contractuelles-types-entre-responsable-de-traitement-et-sous-traitant), [les exemples de clauses](https://www.cnil.fr/fr/sous-traitance-exemple-de-clauses), les textes Légifrance identifiés dans le catalogue et la fiche officielle [Service Public sur la sous-traitance](https://entreprendre.service-public.gouv.fr/vosdroits/F36261). Les sources bornent le périmètre et les points à vérifier ; leur présence ne certifie pas l’exhaustivité de chaque contrat.
+
 | Capacité publique étudiée                         | Preuve                                                                                                                           | Réalisation indépendante                                                                                                                           |
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Projet, documents et contexte explicite           | [Stanford — contexte, observations du 13/10/26](https://ailearninghub.law.stanford.edu/legora-at-sls/context-and-project-files/) | Dossiers SQLite ; contexte sélectionnable à la demande. L’interface ne cherche pas à reproduire le comportement de disparition des pièces jointes. |

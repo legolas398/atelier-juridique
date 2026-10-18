@@ -155,9 +155,14 @@ export function createApplication({ dataDir, demo = true, legalClock } = {}) {
           const doc = await parseDocument(file, matter.id);
           const existing = docsFor(matter.id).find((d) => d.hash === doc.hash);
           if (existing) {
+            if (req.query.reuse === "true") {
+              result.documents.push(existing);
+              continue;
+            }
             result.errors.push({
               name: doc.name,
               message: `Déjà importé : ${existing.name}`,
+              documentId: existing.id,
             });
             continue;
           }

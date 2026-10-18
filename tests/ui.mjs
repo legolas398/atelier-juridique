@@ -4,6 +4,7 @@ import { mkdtemp, rm, mkdir, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createApplication } from "../server/app.mjs";
+import { Document, Packer, Paragraph } from "docx";
 
 // Test DOM + React + vraies API/SQLite. Ceci n'est pas un test visuel Chromium.
 const directory = await mkdtemp(join(tmpdir(), "atelier-ui-"));
@@ -41,6 +42,10 @@ Object.defineProperty(globalThis, "navigator", {
   configurable: true,
 });
 dom.window.HTMLElement.prototype.scrollIntoView = function () {};
+const downloads = [];
+dom.window.HTMLAnchorElement.prototype.click = function () {
+  downloads.push(this.href);
+};
 dom.window.HTMLDialogElement.prototype.showModal = function () {
   this.setAttribute("open", "");
 };
@@ -103,19 +108,70 @@ try {
   assert.ok(document.body.textContent.includes("Maison Rivage"));
   await click("Comparer");
   await until(
-    () => document.querySelectorAll(".research-controls select").length === 2,
+    () => document.querySelectorAll(".compare-slot select").length === 2,
     "sélecteurs de comparaison",
   );
-  const selects = document.querySelectorAll(".research-controls select");
-  fill(selects[0], selects[0].options[1].value);
-  await delay(50);
-  fill(selects[1], selects[1].options[1].value);
-  await delay(50);
+  for (const [side, name, texts] of [
+    [
+      "left",
+      "ui-original.docx",
+      [
+        "Contrat fictif UI",
+        "Préavis : 30 jours.",
+        "Confidentialité maintenue.",
+      ],
+    ],
+    [
+      "right",
+      "ui-revised.docx",
+      [
+        "Contrat fictif UI",
+        "Préavis : 60 jours.",
+        "Confidentialité maintenue.",
+        "Annexe ajoutée.",
+      ],
+    ],
+  ]) {
+    const input = document.querySelector(
+      `.compare-slot.${side} input[type=file]`,
+    );
+    const buffer = await Packer.toBuffer(
+      new Document({
+        sections: [{ children: texts.map((t) => new Paragraph(t)) }],
+      }),
+    );
+    Object.defineProperty(input, "files", {
+      value: [
+        new NativeFile([buffer], name, {
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        }),
+      ],
+      configurable: true,
+    });
+    input.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+    await until(
+      () =>
+        document.querySelector(`.compare-slot.${side} .compare-dropzone strong`)
+          ?.textContent === name,
+      `import ${side}`,
+    );
+  }
   await click("Comparer les versions");
   await until(
     () => document.querySelector(".comparison-row"),
     "comparaison affichée",
   );
+  assert.ok(document.querySelector(".compare-redline-text del"));
+  assert.ok(document.querySelector(".compare-redline-text ins"));
+  await click("Télécharger le Word redline");
+  assert.match(downloads.at(-1), /\/word\?mode=redline$/);
+  assert.equal((await nativeFetch(downloads.at(-1))).status, 200);
+  await click("Côte à côte");
+  await until(
+    () => document.querySelector(".comparison-columns"),
+    "lecture côte à côte",
+  );
+  await click("Redline");
   const changeForm = document.querySelector(".change-review");
   fill(changeForm.querySelector("select"), "flagged");
   fill(changeForm.querySelector("input"), "Clause à vérifier dans le test");
@@ -125,11 +181,29 @@ try {
     () => instance.store.all("comparisons")[0]?.revision === 2,
     "décision persistée",
   );
+  fill(
+    document.querySelector(".change-review input"),
+    "Note conservée après filtrage et navigation.",
+  );
+  await delay(50);
+  const compareFilter = document.querySelector(
+    '[aria-label="Filtrer les différences"]',
+  );
+  fill(compareFilter, "unchanged");
+  await delay(50);
+  fill(compareFilter, "changed");
+  await until(
+    () =>
+      document.querySelector(".change-review input")?.value ===
+      "Note conservée après filtrage et navigation.",
+    "commentaire conservé après filtrage",
+  );
   await click("Recherche juridique");
   const researchInput = await until(
     () => document.querySelector(".research-query input"),
     "recherche juridique",
   );
+  assert.equal(instance.store.all("comparisons")[0].revision, 3);
   fill(researchInput, "responsabilité");
   await delay(50);
   await click("Lancer la recherche");
@@ -263,8 +337,29 @@ try {
   );
   await click("Générateur juridique");
   await until(
-    () => document.querySelectorAll(".template-card").length === 4,
+    () => document.querySelectorAll(".template-card").length === 16,
     "bibliothèque générateur",
+  );
+  fill(
+    document.querySelector('[aria-label="Rechercher un modèle juridique"]'),
+    "licence",
+  );
+  await until(
+    () => document.querySelectorAll(".template-card").length === 1,
+    "filtre du catalogue",
+  );
+  assert.ok(
+    document
+      .querySelector(".template-card")
+      .textContent.includes("Licence de logiciel"),
+  );
+  fill(
+    document.querySelector('[aria-label="Rechercher un modèle juridique"]'),
+    "",
+  );
+  await until(
+    () => document.querySelectorAll(".template-card").length === 16,
+    "catalogue complet",
   );
   [...document.querySelectorAll(".template-card")]
     .find((card) => card.textContent.includes("Accord de confidentialité"))
@@ -379,6 +474,8 @@ try {
         scope:
           "React + JSDOM + HTTP API + SQLite ; aucun rendu visuel Chromium",
         checks: [
+          "import de deux DOCX dans Comparer, redline, vue côte à côte et téléchargement Word",
+          "catalogue de seize modèles, recherche et filtrage de la licence",
           "comparaison, décision persistée, recherche juridique et passage conservé",
           "accueil",
           "grille",

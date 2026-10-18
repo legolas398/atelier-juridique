@@ -1,6 +1,49 @@
+import { extendedTemplates } from "./extended.mjs";
 export const LEGAL_CHECKED_AT = "2026-10-18";
-export const TEMPLATE_VERSION = "2026.10.18.1";
+export const TEMPLATE_VERSION = "2026.10.18.2";
 export const LEGAL_SOURCES = {
+  subcontract: {
+    id: "subcontract",
+    title: "Loi du 31 décembre 1975 relative à la sous-traitance",
+    url: "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000889241/",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Examiner le champ de la loi, l’acceptation, l’agrément des conditions de paiement et les garanties requises ; la trame exclut les marchés publics et la construction.",
+  },
+  software: {
+    id: "software",
+    title: "Code de la propriété intellectuelle · article L122-6",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006278919",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Les actes d’exploitation du logiciel doivent être autorisés sous réserve des exceptions légales, notamment celles de l’article L122-6-1.",
+  },
+  ipAssignment: {
+    id: "ipAssignment",
+    title: "Code de la propriété intellectuelle · article L131-3",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006278958",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Délimiter distinctement les droits et leur exploitation. La chaîne des droits, le droit moral et le régime de rémunération exigent un examen séparé.",
+  },
+  negotiations: {
+    id: "negotiations",
+    title: "Code civil · article 1112",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036829818",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "La liberté des négociations reste soumise à la bonne foi ; distinguer les intentions des engagements obligatoires.",
+  },
+  commercialTermination: {
+    id: "commercialTermination",
+    title: "Code de commerce · article L442-1",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047381704",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Le préavis contractuel ne suffit pas à apprécier une éventuelle rupture brutale d’une relation commerciale établie. Aucun délai universel n’est déduit de cette trame.",
+  },
+  equipmentLoan: {
+    id: "equipmentLoan",
+    title: "Code civil · prêt à usage, articles 1875 et suivants",
+    url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020616173",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Prêt gratuit avec restitution ; examiner les dispositions de tout le chapitre, notamment sur les frais et le terme. La trame vise uniquement du matériel ordinaire.",
+  },
   confidentiality: {
     id: "confidentiality",
     title: "Code civil · article 1112-2",
@@ -616,4 +659,5 @@ export const BUILTIN_TEMPLATES = [
       },
     ],
   },
+  ...extendedTemplates({ field, commonFields, version: TEMPLATE_VERSION }),
 ];

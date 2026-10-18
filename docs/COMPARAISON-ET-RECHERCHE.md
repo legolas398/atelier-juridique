@@ -4,7 +4,11 @@
 
 Deux espaces sont accessibles dans la navigation locale. Ils utilisent SQLite et les pièces du dossier actif. Ils ne nécessitent aucun service externe.
 
-**Comparer** : sélection de deux pièces, comparaison de paragraphes avec ancres textuelles exactes, différences de mots surlignées, ajouts/suppressions/modifications, filtres, signaux sur les chiffres et la portée des clauses, accès aux sources, décision et commentaire par écart, historique et export Word. Chaque comparaison conserve les empreintes SHA-256 des originaux. Les mises à jour utilisent une révision pour refuser les écrasements concurrents.
+**Comparer** : import direct de chaque version par clic ou glisser-déposer, ou sélection parmi les pièces du dossier ; lecture redline et côte à côte ; navigation entre écarts, recherche et filtres ; signaux sur les chiffres et la portée des clauses ; accès aux sources, décision et commentaire par écart, historique et exports. Le bouton **Télécharger le Word redline** produit des révisions natives Word, acceptables ou rejetables, et non uniquement des couleurs. Les exports propres de l’original et du révisé sont proposés séparément, ainsi que le rapport sourcé. Chaque comparaison conserve les empreintes SHA-256 des originaux. Les mises à jour utilisent une révision pour refuser les écrasements concurrents. Les commentaires en cours sont conservés entre filtres et sauvegardés avant la navigation interne.
+
+Dans Word, choisir **Révision → Afficher pour la révision → Toutes les marques** si les suppressions ne sont pas affichées par les préférences du lecteur. Le fichier est reconstruit à partir du texte extrait : styles, tableaux, images, signatures et révisions préexistantes ne sont pas conservés comme dans les originaux. Le traitement des déplacements reste celui d’ajouts/suppressions. La décision « écart accepté » dans Atelier est une annotation de relecture ; elle n’accepte pas silencieusement les révisions du DOCX.
+
+Exemple reproductible sans base utilisateur : `npm run demo:redline` produit deux DOCX fictifs et leur redline dans `test-results/exemple-redline/`.
 
 Les signaux sont des heuristiques à examiner. Ils ne prouvent ni une contradiction juridique, ni la validité d’une clause. Les paragraphes sans ancre sont appariés par position. Les déplacements peuvent produire des ajouts et suppressions. La mise en page, les images et signatures ne sont pas comparées ; l’OCR n’est pas ajouté. Limite : un million de paires de paragraphes. Au-delà de 160 000 paires de tokens dans un paragraphe, celui-ci est marqué intégralement modifié pour borner la mémoire.
 
@@ -30,10 +34,12 @@ Inconnu : droits, quotas et contrats effectivement accordés à l’utilisateur.
 - `PATCH /api/research/:id/bookmarks` : sélectionner les passages à exporter.
 - `POST /api/matters/:id/comparisons` : comparaison de deux pièces du dossier.
 - `PATCH /api/comparisons/:id` : décision, commentaire et révision optimiste.
+- `GET /api/comparisons/:id` : comparaison complète, y compris les anciennes comparaisons adaptées au nouveau rendu.
+- `GET /api/comparisons/:id/word?mode=redline|original|revised` : révisions Word natives ou version propre.
 - `GET /api/research/:id/evidence.docx`, `GET /api/comparisons/:id/evidence.docx` : livrables sourcés.
 
 Tables ajoutées : `comparisons`, `legal_references`, `research_sessions`, rattachées aux dossiers par clé étrangère. Protection locale identique aux autres API : écoute loopback, validation Host/Origin et en-tête de mutation. Ce mode mono-utilisateur ne fournit pas une isolation multi-utilisateur avec authentification.
 
 ## Validation
 
-Tests dédiés : termes entiers, expressions, exclusions, synonymes, documents distincts, citations et empreintes, annotations persistantes, conflit de révision, filtrage temporel, périmètre du dossier, favoris, relecture du DOCX et suppression des résultats dérivés. Parcours React/JSDOM sur les vraies API : comparaison, annotation, recherche et sélection d’un passage, en plus des parcours existants. Le rendu visuel Chromium reste non vérifié dans cet environnement Windows.
+Tests dédiés : termes entiers, expressions, exclusions, synonymes, citations et empreintes, annotations persistantes, conflit de révision, filtrage temporel, périmètre du dossier, favoris et suppression des résultats dérivés. Les DOCX sont ouverts comme archives OOXML : insertions, suppressions, marques de paragraphes et identifiants de révision sont contrôlés. La projection d’acceptation restitue exactement le texte révisé ; celle de rejet restitue l’original. Les versions propres et les sauts de ligne sont également vérifiés. Le parcours React/JSDOM importe deux DOCX, affiche les différences, bascule de vue, déclenche l’export, conserve une annotation après filtre et la sauvegarde à la navigation. Le rendu visuel Chromium et l’ouverture manuelle dans Microsoft Word restent non vérifiés dans cet environnement.

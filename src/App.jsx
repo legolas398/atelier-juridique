@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Generator from "./Generator";
 import Research from "./Research";
+import Compare from "./Compare";
 import {
   ArrowUp,
   ArrowUpRight,
   ArrowRight,
+  ArrowLeftRight,
   BookOpen,
   Check,
   ChevronDown,
@@ -57,7 +59,7 @@ const NAV = [
   ["reviews", "Revue tabulaire", Table2],
   ["documents", "Documents", Files],
   ["generator", "Générateur juridique", FilePlus2],
-  ["compare", "Comparer", Files],
+  ["compare", "Comparer", ArrowLeftRight],
   ["research", "Recherche juridique", Search],
   ["notes", "Rédaction", PencilLine],
   ["activity", "Activité", History],
@@ -198,7 +200,7 @@ export default function App() {
   }, []);
   const go = async (next) => {
     if (
-      ["notes", "generator"].includes(page) &&
+      ["notes", "generator", "compare"].includes(page) &&
       next !== page &&
       noteGuard.current &&
       !(await noteGuard.current())
@@ -448,7 +450,7 @@ export default function App() {
               className={`matter-item ${m.id === matterId ? "selected" : ""}`}
               onClick={async () => {
                 if (
-                  ["notes", "generator"].includes(page) &&
+                  ["notes", "generator", "compare"].includes(page) &&
                   noteGuard.current &&
                   !(await noteGuard.current())
                 )
@@ -573,13 +575,7 @@ export default function App() {
                   <div className="home-composer">
                     {composer(true)}
                     <div className="prompt-chips">
-                      <button
-                        onClick={() =>
-                          send(
-                            "Compare les durées et les préavis des contrats du dossier.",
-                          )
-                        }
-                      >
+                      <button onClick={() => go("compare")}>
                         <Table2 size={14} />
                         Comparer des contrats
                       </button>
@@ -1293,12 +1289,22 @@ export default function App() {
                   guard={noteGuard}
                 />
               )}
-              {(page === "compare" || page === "research") && (
+              {page === "compare" && (
+                <Compare
+                  key={matterId}
+                  matterId={matterId}
+                  documents={docs}
+                  onImported={refresh}
+                  guard={noteGuard}
+                  onSource={setSource}
+                  onError={error}
+                />
+              )}
+              {page === "research" && (
                 <Research
                   key={`${matterId}-${page}`}
                   matterId={matterId}
                   documents={docs}
-                  comparisonMode={page === "compare"}
                   onSource={setSource}
                   onError={error}
                 />
@@ -1368,7 +1374,7 @@ export default function App() {
           onError={error}
           onCreated={async (m) => {
             if (
-              ["notes", "generator"].includes(page) &&
+              ["notes", "generator", "compare"].includes(page) &&
               noteGuard.current &&
               !(await noteGuard.current())
             )

@@ -20,7 +20,7 @@ En développement : `npm run dev`. Le serveur écoute uniquement sur `127.0.0.1:
 
 ## Ce qui fonctionne
 
-- **Comparer** : différences de paragraphes et de mots entre deux pièces, sources, filtres, annotations et export Word.
+- **Comparer** : import direct des deux versions, lecture redline ou côte à côte, filtres, recherche, annotations et export DOCX avec de vraies révisions Word acceptables ou rejetables. Exports propres de chaque version et rapport sourcé disponibles. La mise en page d’origine n’est pas conservée.
 - **Recherche juridique** : recherche classée dans les pièces ou les références importées, expressions exactes, exclusions, synonymes limités, filtres, historique et passages conservés. Voir [le périmètre détaillé](docs/COMPARAISON-ET-RECHERCHE.md). Les liens vers les bases officielles ne constituent pas des connexions API actives.
 
 - Dossiers distincts avec nom, description et client.
@@ -32,7 +32,7 @@ En développement : `npm run dev`. Le serveur écoute uniquement sur `127.0.0.1:
 - Correction des cellules, révisions antérieures, validation, signalement, verrouillage et commentaires.
 - Export XLSX avec feuille de sources/décisions ; rapport Word avec extraits. Un export incomplet porte la mention brouillon.
 - Notes libres sauvegardées avant navigation, détection de conflits de version et export Word.
-- Générateur juridique : NDA, prestations de services, avenant et mise en demeure, avec questionnaire, clauses éditables, contrôles sourcés, historique et relecture enregistrée. Import de modèles de cabinet à variables. Voir [le guide du générateur](docs/GENERATEUR-JURIDIQUE.md).
+- Générateur juridique : **16 modèles** avec bibliothèque filtrable, questionnaires spécialisés, clauses éditables, contrôles sourcés, historique et relecture enregistrée. NDA, services, avenant, mise en demeure, RGPD, SaaS, maintenance, sous-traitance, licence, cession de droits, lettre d’intention, résiliation amiable, non-renouvellement, échéancier, recette et prêt de matériel. Import de modèles de cabinet à variables. Voir [le guide du générateur](docs/GENERATEUR-JURIDIQUE.md).
 - Journal local d’activité, téléchargement des originaux, suppression des pièces et dérivés de l’assistant.
 - Interface adaptée aux petits écrans et navigation au clavier dans les dialogues principaux.
 

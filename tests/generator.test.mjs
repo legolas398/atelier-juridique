@@ -251,7 +251,7 @@ test("Parcours générateur HTTP : sauvegarde, relecture liée à une empreinte,
     title: "Générateur fictif",
   });
   const prefix = `/matters/${matter.id}/generator`;
-  assert.equal((await req(prefix + "/templates")).data.length, 4);
+  assert.equal((await req(prefix + "/templates")).data.length, 16);
   const payload = {
     templateId: "fr-nda",
     title: "NDA de test",

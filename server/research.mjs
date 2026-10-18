@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Document, Packer, Paragraph, HeadingLevel } from "docx";
 import { uid, now } from "./store.mjs";
 import { LEGAL_SOURCES } from "./legal/catalog.mjs";
+import { comparisonWord } from "./redline.mjs";
 
 const normalize = (s) =>
   s.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
@@ -204,6 +205,13 @@ export function tokenDiff(left, right) {
     return {
       left: [{ text: left, changed: left !== right }],
       right: [{ text: right, changed: left !== right }],
+      operations:
+        left === right
+          ? [{ kind: "equal", text: left }]
+          : [
+              { kind: "delete", text: left },
+              { kind: "insert", text: right },
+            ].filter((o) => o.text),
     };
   const dp = Array.from(
     { length: a.length + 1 },
@@ -215,7 +223,7 @@ export function tokenDiff(left, right) {
         a[i] === b[j]
           ? 1 + dp[i + 1][j + 1]
           : Math.max(dp[i + 1][j], dp[i][j + 1]);
-  const result = { left: [], right: [] };
+  const result = { left: [], right: [], operations: [] };
   let i = 0,
     j = 0;
   const append = (side, text, changed) => {
@@ -223,13 +231,26 @@ export function tokenDiff(left, right) {
     if (last?.changed === changed) last.text += text;
     else result[side].push({ text, changed });
   };
+  const operation = (kind, text) => {
+    const last = result.operations.at(-1);
+    if (last?.kind === kind) last.text += text;
+    else result.operations.push({ kind, text });
+  };
   while (i < a.length || j < b.length) {
     if (i < a.length && j < b.length && a[i] === b[j]) {
+      operation("equal", a[i]);
       append("left", a[i++], false);
       append("right", b[j++], false);
-    } else if (i < a.length && (j === b.length || dp[i + 1][j] >= dp[i][j + 1]))
+    } else if (
+      i < a.length &&
+      (j === b.length || dp[i + 1][j] >= dp[i][j + 1])
+    ) {
+      operation("delete", a[i]);
       append("left", a[i++], true);
-    else append("right", b[j++], true);
+    } else {
+      operation("insert", b[j]);
+      append("right", b[j++], true);
+    }
   }
   return result;
 }
@@ -426,13 +447,19 @@ export function registerResearchRoutes(app, store, need) {
       .parse(req.body);
     const l = need("documents", input.leftId),
       r = need("documents", input.rightId);
+    if (l.matterId !== req.params.id || r.matterId !== req.params.id)
+      throw Object.assign(
+        new Error("Choisissez des documents de ce dossier."),
+        { status: 422 },
+      );
     if (
-      l.matterId !== req.params.id ||
-      r.matterId !== req.params.id ||
-      l.id === r.id
+      !l.pages.some((p) => p.blocks.some((b) => b.text.trim())) ||
+      !r.pages.some((p) => p.blocks.some((b) => b.text.trim()))
     )
       throw Object.assign(
-        new Error("Choisissez deux documents distincts de ce dossier."),
+        new Error(
+          "Les deux versions doivent contenir du texte exploitable. Un PDF scanné nécessite un OCR préalable.",
+        ),
         { status: 422 },
       );
     const comparison = {
@@ -459,6 +486,37 @@ export function registerResearchRoutes(app, store, need) {
     );
     res.status(201).json(comparison);
   });
+  const hydrateComparison = (c) => ({
+    ...c,
+    changes: c.changes.map((change) => ({
+      ...change,
+      tokens: change.tokens?.operations
+        ? change.tokens
+        : tokenDiff(change.left?.quote || "", change.right?.quote || ""),
+    })),
+  });
+  app.get("/api/comparisons/:id", (req, res) =>
+    res.json(hydrateComparison(need("comparisons", req.params.id))),
+  );
+  app.get("/api/comparisons/:id/word", async (req, res) => {
+    const mode = z
+      .enum(["redline", "original", "revised"])
+      .default("redline")
+      .parse(req.query.mode);
+    const c = hydrateComparison(need("comparisons", req.params.id));
+    const buffer = await comparisonWord(c, mode);
+    store.log(
+      c.matterId,
+      "Comparaison exportée",
+      `Word ${mode} · ${c.leftName} → ${c.rightName}`,
+    );
+    res
+      .type(
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      )
+      .attachment(`comparaison-${mode}.docx`)
+      .send(buffer);
+  });
   app.patch("/api/comparisons/:id", (req, res) => {
     const c = need("comparisons", req.params.id);
     const input = z
@@ -481,7 +539,7 @@ export function registerResearchRoutes(app, store, need) {
     c.revision++;
     store.put("comparisons", c, { matter_id: c.matterId });
     store.log(c.matterId, "Écart annoté", change.decision);
-    res.json(c);
+    res.json(hydrateComparison(c));
   });
   app.get("/api/:type/:id/evidence.docx", async (req, res) => {
     const table = { comparisons: "comparisons", research: "research_sessions" }[

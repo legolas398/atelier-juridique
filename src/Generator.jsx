@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   TriangleAlert,
   X,
+  Search,
 } from "lucide-react";
 import { api, date, download } from "./api";
 import { Modal, Empty } from "./components";
@@ -48,6 +49,17 @@ export default function Generator({
   const baseline = useRef("");
   const actionLock = useRef(false);
   const [confirmRegenerate, setConfirmRegenerate] = useState(false);
+  const [catalogQuery, setCatalogQuery] = useState(""),
+    [catalogFamily, setCatalogFamily] = useState("all");
+  const catalogNormalize = (s) =>
+    s.toLocaleLowerCase("fr").normalize("NFD").replace(/\p{M}/gu, "");
+  const visibleTemplates = templates.filter(
+    (t) =>
+      (catalogFamily === "all" || t.category === catalogFamily) &&
+      catalogNormalize(`${t.title} ${t.description} ${t.tag}`).includes(
+        catalogNormalize(catalogQuery),
+      ),
+  );
   const current = JSON.stringify({ answers, overrides, title });
   const dirty = !!selected && current !== baseline.current;
   const groups = [...new Set(selected?.fields.map((f) => f.group) ?? [])];
@@ -278,8 +290,37 @@ export default function Generator({
             </div>
             <span className="badge neutral">Sans clé API</span>
           </div>
+          <div className="generator-catalog-toolbar">
+            <label>
+              <Search size={16} />
+              <input
+                aria-label="Rechercher un modèle juridique"
+                placeholder="Rechercher un document, un usage…"
+                value={catalogQuery}
+                onChange={(e) => setCatalogQuery(e.target.value)}
+              />
+            </label>
+            <strong>{visibleTemplates.length} modèle(s)</strong>
+          </div>
+          <div
+            className="generator-categories"
+            role="group"
+            aria-label="Familles de documents"
+          >
+            {["all", ...new Set(templates.map((t) => t.category))].map(
+              (family) => (
+                <button
+                  key={family}
+                  aria-pressed={catalogFamily === family}
+                  onClick={() => setCatalogFamily(family)}
+                >
+                  {family === "all" ? "Tous les documents" : family}
+                </button>
+              ),
+            )}
+          </div>
           <div className="generator-templates">
-            {templates.map((template, index) => (
+            {visibleTemplates.map((template, index) => (
               <button
                 className="template-card"
                 key={template.id}
@@ -294,6 +335,10 @@ export default function Generator({
                 </div>
                 <h2>{template.title}</h2>
                 <p>{template.description}</p>
+                <div className="template-detail-counts">
+                  {template.fields.length} champs guidés ·{" "}
+                  {template.reviewItems.length} points de relecture
+                </div>
                 <footer>
                   <span>{template.tag}</span>
                   <small>
@@ -305,6 +350,12 @@ export default function Generator({
               </button>
             ))}
           </div>
+          {!visibleTemplates.length && (
+            <p className="generator-catalog-empty">
+              Aucun modèle ne correspond. Essayez un autre terme ou une autre
+              famille.
+            </p>
+          )}
           <div className="section-heading">
             <h2>Documents préparés dans ce dossier</h2>
             <span className="muted">{drafts.length} document(s)</span>
@@ -361,6 +412,13 @@ export default function Generator({
             <div className="questionnaire-model">
               <FileText size={19} />
               <strong>{selected.title}</strong>
+              {selected.partyRoles && (
+                <p className="generator-party-roles">
+                  Partie 1 : {selected.partyRoles[0]}
+                  <br />
+                  Partie 2 : {selected.partyRoles[1]}
+                </p>
+              )}
               <small>
                 {selected.origin === "cabinet"
                   ? "Modèle fourni par vous"

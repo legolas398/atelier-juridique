@@ -15,6 +15,25 @@ Une modification remet le document au statut projet et conserve la révision pr�
 
 ## Modèles proposés et portée
 
+La bibliothèque comporte désormais **16 trames indépendantes**, recherchables par mot et filtrables par famille. Chaque trame dispose de champs et de contrôles propres. Les rôles des deux parties sont affichés dans le questionnaire.
+
+| Nouvelle trame | Éléments spécifiques et contrôles |
+| --- | --- |
+| Accord de sous-traitance RGPD | Opérations, personnes, données, instructions, sécurité, lieux, sous-traitants, assistance, audit et sortie ; périmètre EEE déclaré, hors transferts internationaux. |
+| Abonnement SaaS | Utilisateurs, SLA, support, remèdes, hébergement, annexe données, réversibilité et plafond ; annexe trop courte bloquante, examen distinct du règlement sur les données signalé. |
+| Maintenance informatique | Inventaire, versions, prestations incluses/exclues, délais, sauvegardes, accès, changements et transfert des tickets. |
+| Sous-traitance de prestations | Contrat principal, mission, acceptation et agrément, garantie de paiement, autonomie ; formalités non confirmées bloquantes. Hors construction et marchés publics. |
+| Licence de logiciel | Version, usages et utilisateurs, territoire, durée, support, chaîne de droits et composants tiers ; licence non exclusive et exceptions légales réservées. |
+| Cession d’une création identifiée | Œuvre existante, chaîne des droits, droits individualisés, destinations, lieu, durée, rémunération et exclusions ; titularité non confirmée bloquante, droit moral réservé. |
+| Lettre d’intention | Intentions indicatives distinguées des engagements obligatoires de confidentialité, frais et droit applicable ; aucune exclusivité ni promesse automatique. |
+| Résiliation amiable | Contrat initial, date, solde, transition, clauses survivantes et droits réservés ; aucune transaction ou quittance générale présumée. |
+| Notification de non-renouvellement | Clause exacte, échéance, réception cible, préavis calendaire et contexte commercial ; délai insuffisant et examen non confirmé bloquants. Ne vise pas une rupture anticipée pour faute. |
+| Échelonnement d’une dette échue | Origine, principal, accessoires, mensualités calculées au centime, fins de mois, impayés ; créance contestée/non vérifiée et dates incohérentes bloquantes. |
+| Procès-verbal de recette | Livrables et versions, critères et tests, décision, réserves et levée ; décision sans réserve incompatible avec des réserves décrites. |
+| Prêt gratuit de matériel | Inventaire, usage, remise, entretien, assurance, durée et restitution ; gratuité, propriété du prêteur et règles légales de reprise préservées. |
+
+Les quatre trames de base et l’import de modèles de cabinet restent disponibles :
+
 | Modèle                    | Contenu                                                                                                                                                                      | Limites explicites                                                                                                                |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Accord de confidentialité | Unilatéral ou réciproque, finalité, exclusions, accès, divulgation imposée, période et survie, restitution, absence de cession                                               | Pas d'exclusivité ni de montant de pénalité inventé ; informations et durées à adapter                                            |
@@ -63,6 +82,6 @@ Consultation publique le **18/10/2026**, via les résultats indexés des sites o
 
 `server/legal/catalog.mjs` contient les questionnaires, références et dates de consultation ; `generator.mjs` les rédactions et contrôles ; `routes.mjs` les révisions, relectures et exports. Toute évolution des règles ou des trames doit incrémenter leur version et s'accompagner d'une relecture juridique et de tests. Ne pas modifier une date de consultation sans revoir la source et ses conséquences.
 
-Les tests backend vérifient les quatre trames, les montants, dates, cas hors périmètre, garde-fous, modèles personnalisés, DOCX réextrait, révisions et invalidation d'une relecture. Le test React/JSDOM suit un NDA complet, du questionnaire à la relecture puis à sa réinitialisation après une modification. L'horloge juridique est figée uniquement dans les tests ; la production utilise la date courante et ne permet pas de la fournir via l'API.
+Les tests backend vérifient les seize trames, l’enregistrement et le DOCX réextrait de chaque nouvelle trame, les montants, dates, cas hors périmètre, garde-fous, modèles personnalisés, révisions et invalidation d’une relecture. L’échéancier est testé avec des centimes non divisibles et des fins de mois. Le test React/JSDOM couvre le catalogue, son filtre et un NDA complet jusqu’à l’invalidation de la relecture. L’horloge juridique est figée uniquement dans les tests ; la production utilise la date courante et ne permet pas de la fournir via l’API.
 
 L'accès et le stockage restent ceux de l'application locale : une seule identité de session, sans collaboration d'équipe authentifiée. Les vérifications visuelles Chromium restent soumises aux restrictions Windows déjà documentées.

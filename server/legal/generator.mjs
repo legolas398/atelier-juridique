@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { extendedClauses } from "./extended.mjs";
 import {
   LEGAL_SOURCES,
   LEGAL_CHECKED_AT,
@@ -514,6 +515,17 @@ export function generateDocument(
         `À défaut de régularisation, nous nous réservons la possibilité d’exercer les recours appropriés auprès de l’autorité compétente, après vérification de leurs conditions. Le présent courrier chiffre uniquement le principal : aucun intérêt, frais de recouvrement, indemnité forfaitaire ou pénalité n’est ajouté sans détermination et justification de son régime applicable. Ce délai supplémentaire ne constitue pas une remise de dette ni une renonciation générale aux droits existants. Veuillez conserver la preuve du contenu adressé et de sa remise au destinataire.`,
       );
     }
+    extendedClauses(template, {
+      answers,
+      value,
+      when,
+      amount,
+      section,
+      issue,
+      cents,
+      euro,
+      validDate,
+    });
     if (["fr-nda", "fr-services"].includes(template.id))
       section(
         "disputes",
@@ -526,10 +538,10 @@ export function generateDocument(
       );
     section(
       "signatures",
-      template.id === "fr-demand"
+      ["fr-demand", "fr-notice-termination"].includes(template.id)
         ? "Émission et signature"
         : "Formalisation et signatures",
-      `Fait à ${value("signCity")}, le ${when("signDate")}.\n\nPour ${value("p1name")} : ${value("p1representative")}, ${value("p1capacity")}.\nSignature : ____________________${template.id === "fr-demand" ? "" : `\n\nPour ${value("p2name")} : ${value("p2representative")}, ${value("p2capacity")}.\nSignature : ____________________`}`,
+      `Fait à ${value("signCity")}, le ${when("signDate")}.\n\nPour ${value("p1name")} : ${value("p1representative")}, ${value("p1capacity")}.\nSignature : ____________________${["fr-demand", "fr-notice-termination"].includes(template.id) ? "" : `\n\nPour ${value("p2name")} : ${value("p2representative")}, ${value("p2capacity")}.\nSignature : ____________________`}`,
     );
   }
   const validIds = new Set(sections.map((s) => s.id));
