@@ -1,0 +1,218 @@
+.research-workspace {
+  max-width: 1240px;
+  margin: auto;
+  padding-bottom: 60px;
+}
+.research-workspace h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 36px;
+}
+.research-workspace > header {
+  margin-bottom: 28px;
+}
+.research-controls {
+  border: 1px solid #d9dfd8;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px;
+  min-width: 0;
+}
+.research-controls form,
+.reference-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+}
+.research-workspace label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 180px;
+}
+.research-workspace input,
+.research-workspace select,
+.research-workspace textarea {
+  font: inherit;
+  border: 1px solid #cbd3ca;
+  border-radius: 7px;
+  padding: 10px;
+  background: #fff;
+  max-width: 100%;
+  color: #243c32;
+}
+.research-query {
+  flex-basis: 100% !important;
+}
+.research-help {
+  font-size: 12px;
+  color: #5c6b62;
+  line-height: 1.6;
+  width: 100%;
+}
+.research-check {
+  flex-direction: row !important;
+  align-items: center;
+  margin: 10px 0;
+}
+.research-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 26px 0 16px;
+}
+.research-toolbar h2 {
+  margin: 0;
+  flex: 1;
+}
+.research-notice {
+  border-left: 3px solid #ad8a51;
+  background: #f6f0e5;
+  padding: 14px;
+  line-height: 1.6;
+  font-size: 13px;
+}
+.research-result,
+.comparison-row {
+  background: #fff;
+  border: 1px solid #d9dfd8;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 14px 0;
+}
+.research-result header,
+.comparison-row > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+.research-result h3 {
+  font-size: 16px;
+  margin: 0;
+}
+.research-result blockquote {
+  white-space: pre-wrap;
+  margin: 18px 0;
+  line-height: 1.7;
+}
+.research-workspace button:not(.btn):not(.source-link) {
+  cursor: pointer;
+  border: 1px solid #cbd3ca;
+  border-radius: 6px;
+  background: white;
+  color: #284b3b;
+  padding: 7px 10px;
+}
+.research-workspace button[aria-pressed="true"] {
+  background: #e5eee7;
+}
+.comparison-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 18px 0;
+}
+.comparison-columns > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.comparison-columns p {
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+.comparison-columns del {
+  background: #f8dfdc;
+  text-decoration-color: #a43e35;
+}
+.comparison-columns ins {
+  background: #dceedd;
+  text-decoration: underline;
+  text-decoration-color: #357947;
+}
+.comparison-columns small {
+  font-weight: 700;
+  color: #68786d;
+}
+.comparison-row.modified {
+  border-left: 4px solid #b88a3b;
+}
+.comparison-row.added {
+  border-left: 4px solid #46805c;
+}
+.comparison-row.removed {
+  border-left: 4px solid #ad6058;
+}
+.change-review {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: end;
+  border-top: 1px solid #e1e5df;
+  padding-top: 15px;
+}
+.change-review label:nth-child(2) {
+  flex: 2;
+}
+.research-history,
+.research-references {
+  border: 1px solid #d9dfd8;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 20px 0;
+  background: #fafbf7;
+}
+.research-history summary,
+.research-references summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.research-history > button {
+  display: block;
+  margin: 12px 0;
+  width: 100%;
+  text-align: left;
+}
+.research-history small {
+  display: block;
+  margin-top: 5px;
+}
+.reference-library {
+  margin-top: 35px;
+}
+.reference-form {
+  background: #f1f4ee;
+  padding: 20px;
+  border-radius: 10px;
+}
+.reference-text {
+  flex-basis: 100% !important;
+}
+.research-workspace a {
+  color: #286342;
+}
+.research-workspace button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+@media (max-width: 760px) {
+  .comparison-columns {
+    grid-template-columns: 1fr;
+  }
+  .comparison-columns > div + div {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+  }
+  .research-workspace h1 {
+    font-size: 28px;
+  }
+  .research-result header {
+    align-items: start;
+    flex-direction: column;
+  }
+}
