@@ -16,6 +16,7 @@ const blocks = (doc) =>
       pageLabel: p.label,
       blockId: b.id,
       quote: b.text,
+      formatting: b.formatting || null,
       hash: doc.hash,
       sourceType: doc.sourceType,
     })),
@@ -157,6 +158,8 @@ export function compareDocuments(left, right) {
   let ai = 0,
     bi = 0;
   const add = (l, r, status) => {
+    const formatChanges = l && r ? formattingDiff(l.formatting, r.formatting) : [];
+    if (status === "unchanged" && formatChanges.length) status = "modified";
     const numberPattern = /\d+(?:[.,]\d+)?(?:\s*(?:€|%|jours?|mois|ans?))?/g;
     const flags = [];
     if (
@@ -178,6 +181,7 @@ export function compareDocuments(left, right) {
       left: l || null,
       right: r || null,
       flags,
+      formatChanges,
       decision: "pending",
       comment: "",
       tokens: tokenDiff(l?.quote || "", r?.quote || ""),
@@ -195,6 +199,74 @@ export function compareDocuments(left, right) {
       bi = y + 1;
     }
   }
+  return changes;
+}
+
+export function formattingDiff(left, right) {
+  if (!left && !right) return [];
+  const changes = [];
+  const before = left || { paragraph: {}, runs: [], objects: 0 };
+  const after = right || { paragraph: {}, runs: [], objects: 0 };
+  const names = {
+    style: "Style de paragraphe",
+    alignment: "Alignement",
+    outlineLevel: "Niveau de titre",
+    indentLeft: "Retrait gauche",
+    indentRight: "Retrait droit",
+    firstLineIndent: "Retrait de première ligne",
+    spaceBefore: "Espace avant",
+    spaceAfter: "Espace après",
+    lineSpacing: "Interligne",
+    list: "Numérotation ou liste",
+    pageBreakBefore: "Saut de page avant",
+    keepNext: "Conserver avec le paragraphe suivant",
+    keepLines: "Conserver les lignes ensemble",
+    widowControl: "Contrôle des veuves et orphelines",
+    contextualSpacing: "Espacement contextuel",
+    bidi: "Direction du paragraphe",
+  };
+  for (const [key, label] of Object.entries(names))
+    if ((before.paragraph?.[key] ?? null) !== (after.paragraph?.[key] ?? null))
+      changes.push({ area: "paragraph", key, label, before: before.paragraph?.[key] ?? "Par défaut", after: after.paragraph?.[key] ?? "Par défaut" });
+  const properties = ["bold", "italic", "underline", "strike", "font", "size", "color", "highlight", "vertical", "smallCaps", "caps", "characterSpacing"];
+  const labels = { bold: "Gras", italic: "Italique", underline: "Soulignement", strike: "Barré", font: "Police", size: "Corps", color: "Couleur du texte", highlight: "Surlignage", vertical: "Exposant ou indice", smallCaps: "Petites capitales", caps: "Capitales", characterSpacing: "Espacement des caractères" };
+  const offsets = (runs = []) => {
+    const spans = [];
+    let cursor = 0;
+    for (const run of runs) {
+      spans.push({ start: cursor, end: cursor + run.text.length, style: run });
+      cursor += run.text.length;
+    }
+    return spans;
+  };
+  const beforeSpans = offsets(before.runs);
+  const afterSpans = offsets(after.runs);
+  const at = (spans, index) => spans.find((span) => index >= span.start && index < span.end)?.style || {};
+  const leftText = before.runs.map((run) => run.text).join("");
+  const rightText = after.runs.map((run) => run.text).join("");
+  const observed = new Map();
+  let leftIndex = 0;
+  let rightIndex = 0;
+  for (const operation of tokenDiff(leftText, rightText).operations) {
+    if (operation.kind === "equal") {
+      for (let i = 0; i < operation.text.length; i++) {
+        const oldStyle = at(beforeSpans, leftIndex + i);
+        const newStyle = at(afterSpans, rightIndex + i);
+        for (const key of properties) if ((oldStyle[key] ?? null) !== (newStyle[key] ?? null)) {
+          const values = observed.get(key) || { before: new Set(), after: new Set() };
+          values.before.add(oldStyle[key] ?? "Absent");
+          values.after.add(newStyle[key] ?? "Absent");
+          observed.set(key, values);
+        }
+      }
+      leftIndex += operation.text.length;
+      rightIndex += operation.text.length;
+    } else if (operation.kind === "delete") leftIndex += operation.text.length;
+    else rightIndex += operation.text.length;
+  }
+  for (const [key, values] of observed)
+    changes.push({ area: "run", key, label: labels[key], before: [...values.before].join(", "), after: [...values.after].join(", ") });
+  if ((before.objects || 0) !== (after.objects || 0)) changes.push({ area: "object", key: "objects", label: "Objets ou images incorporés", before: before.objects || 0, after: after.objects || 0 });
   return changes;
 }
 
@@ -476,7 +548,7 @@ export function registerResearchRoutes(app, store, need) {
       changes: compareDocuments(l, r),
       warnings: [...l.warnings, ...r.warnings],
       method:
-        "Différences textuelles par paragraphes et ancres exactes. Les paragraphes modifiés sont appariés par position ; les déplacements peuvent apparaître comme ajouts et suppressions. Mise en page, images et signatures non comparées.",
+        "Comparaison du texte par paragraphes avec suivi des propriétés Word explicites : style, alignement, retraits, espacement, listes, attributs typographiques et objets incorporés. Les paragraphes modifiés sont appariés par position ; les déplacements peuvent apparaître comme ajouts et suppressions. Pagination, tableaux complexes, images, en-têtes, signatures et mise en page des PDF ne sont pas reproduits fidèlement.",
     };
     store.put("comparisons", comparison, { matter_id: comparison.matterId });
     store.log(

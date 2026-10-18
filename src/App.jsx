@@ -55,12 +55,12 @@ import {
 
 const NAV = [
   ["home", "Vue d’ensemble", LayoutGrid],
-  ["assistant", "Assistant", Sparkles],
+  ["assistant", "Questions / réponses", Sparkles],
   ["reviews", "Revue tabulaire", Table2],
   ["documents", "Documents", Files],
   ["generator", "Générateur juridique", FilePlus2],
   ["compare", "Comparer", ArrowLeftRight],
-  ["research", "Recherche juridique", Search],
+  ["research", "Flash & recherche juridique", Search],
   ["notes", "Rédaction", PencilLine],
   ["activity", "Activité", History],
 ];
@@ -572,6 +572,82 @@ export default function App() {
                       <span />
                     </div>
                   </div>
+                  <section
+                    className="home-tasks"
+                    aria-labelledby="home-tasks-title"
+                  >
+                    <div className="home-tasks-heading">
+                      <div>
+                        <span className="eyebrow">
+                          QUE SOUHAITEZ-VOUS FAIRE ?
+                        </span>
+                        <h2 id="home-tasks-title">Commencer par une tâche</h2>
+                      </div>
+                      <span>
+                        {docs.length} pièce{docs.length > 1 ? "s" : ""} dans ce dossier
+                      </span>
+                    </div>
+                    <div className="home-task-grid">
+                      <button
+                        className="home-task upload-task"
+                        onClick={() => fileInput.current?.click()}
+                      >
+                        <span className="home-task-icon"><Upload size={19} /></span>
+                        <strong>Ajouter des pièces</strong>
+                        <small>
+                          Importer un contrat, un PDF ou un échange
+                        </small>
+                        <ArrowUpRight size={16} />
+                      </button>
+                      <button
+                        className="home-task"
+                        onClick={() => go("generator")}
+                      >
+                        <span className="home-task-icon"><FilePlus2 size={19} /></span>
+                        <strong>Créer un document</strong>
+                        <small>
+                          Parcourir les modèles et générer un projet Word
+                        </small>
+                        <ArrowUpRight size={16} />
+                      </button>
+                      <button
+                        className="home-task"
+                        onClick={() =>
+                          docs.length
+                            ? send(
+                                "Prépare un flash juridique du dossier : résume les faits établis par les pièces, les clauses ou points de droit à examiner, les risques et les prochaines vérifications. Pour chaque constat, cite les passages exacts. Signale clairement ce que les documents ne permettent pas de conclure.",
+                              )
+                            : fileInput.current?.click()
+                        }
+                      >
+                        <span className="home-task-icon"><ShieldCheck size={19} /></span>
+                        <strong>Obtenir un flash juridique</strong>
+                        <small>
+                          Faire ressortir les points d’attention avec leurs sources
+                        </small>
+                        <ArrowUpRight size={16} />
+                      </button>
+                      <button
+                        className="home-task"
+                        onClick={() => {
+                          setPrompt("");
+                          go("assistant");
+                        }}
+                      >
+                        <span className="home-task-icon"><MessageSquare size={19} /></span>
+                        <strong>Question / réponse rapide</strong>
+                        <small>
+                          Interroger les pièces et ouvrir les extraits cités
+                        </small>
+                        <ArrowUpRight size={16} />
+                      </button>
+                    </div>
+                    {!docs.length && (
+                      <p className="home-task-hint">
+                        Ajoutez d’abord une pièce pour activer le flash juridique et les réponses fondées sur votre dossier.
+                      </p>
+                    )}
+                  </section>
                   <div className="home-composer">
                     {composer(true)}
                     <div className="prompt-chips">

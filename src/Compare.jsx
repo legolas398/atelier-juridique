@@ -296,6 +296,10 @@ export default function Compare({
               {changed.filter((c) => c.decision === "accepted").length} /{" "}
               {changed.length} écarts acceptés
             </div>
+            <div className="compare-format-count" title="Changements détectés dans les propriétés Word et les styles de texte">
+              <FileText size={15} />
+              {changes.reduce((total, change) => total + (change.formatChanges?.length || 0), 0)} changements de forme
+            </div>
             {Object.keys(edits).length > 0 && (
               <button className="button" disabled={!!busy} onClick={saveEdits}>
                 Enregistrer {Object.keys(edits).length} décision(s)
@@ -457,7 +461,7 @@ export default function Compare({
                   <p>
                     {changed.length
                       ? "Modifiez le filtre ou la recherche."
-                      : "La comparaison ne détecte aucun changement textuel. Les différences de mise en page ne sont pas examinées."}
+                      : "Aucun changement de texte ni de format Word détecté dans les éléments comparés."}
                   </p>
                 </div>
               )}
@@ -482,6 +486,14 @@ export default function Compare({
                   </header>
                   {c.flags.length > 0 && (
                     <p className="compare-flags">{c.flags.join(" · ")}</p>
+                  )}
+                  {!!c.formatChanges?.length && (
+                    <div className="compare-format-changes" aria-label="Changements de mise en forme">
+                      <strong><FileText size={13} /> Mise en forme · {c.formatChanges.length}</strong>
+                      <div>{c.formatChanges.map((format, i) => (
+                        <span key={`${format.key}-${i}`}><b>{format.label}</b><del>{typeof format.before === "object" ? JSON.stringify(format.before) : String(format.before)}</del><ArrowRight size={11} /><ins>{typeof format.after === "object" ? JSON.stringify(format.after) : String(format.after)}</ins></span>
+                      ))}</div>
+                    </div>
                   )}
                   {view === "redline" ? (
                     <p className="compare-redline-text">
@@ -578,10 +590,7 @@ export default function Compare({
               <p key={i}>{w}</p>
             ))}
             <p>
-              Le DOCX est reconstruit à partir du texte extrait. Les tableaux,
-              images, styles, signatures et révisions préexistantes ne sont pas
-              préservés comme dans les fichiers d’origine.
-            </p>
+              <p>Le redline inclut les changements de texte et les révisions natives de propriétés Word détectées dans les paragraphes et segments de texte. Le document est reconstruit : pagination, tableaux complexes, images, en-têtes, signatures et révisions préexistantes ne sont pas reproduits fidèlement. Les PDF et scans sont comparés sur leur texte extrait ; leur géométrie et leur typographie ne sont pas disponibles dans cette version.</p>
             <code>
               Référence SHA-256 : {comparison.leftHash}
               <br />

@@ -6,6 +6,7 @@ import {
   TextRun,
   HeadingLevel,
   Footer,
+  Header,
   PageNumber,
   AlignmentType,
 } from "docx";
@@ -343,23 +344,46 @@ export function registerGeneratorRoutes(
       ? "RELECTURE ENREGISTRÉE — SANS CERTIFICATION JURIDIQUE"
       : "PROJET — À COMPLÉTER ET RELIRE";
     const children = [
-      new Paragraph({ text: draft.content.title, heading: HeadingLevel.TITLE }),
       new Paragraph({
+        text: draft.content.title,
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 280 },
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
         children: [
           new TextRun({
             text: label,
             bold: true,
             color: final ? "31563C" : "9B6339",
+            size: 18,
           }),
         ],
       }),
-      new Paragraph(
-        `Révision ${draft.revision} · modèle ${draft.templateSnapshot.version} · droit français`,
-      ),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 420 },
+        children: [new TextRun({
+          text: `Révision ${draft.revision} · modèle ${draft.templateSnapshot.version} · droit français`,
+          color: "666666",
+          size: 18,
+        })],
+      }),
     ];
+    let articleNumber = 0;
     for (const section of draft.content.sections) {
+      const isStructural = ["parties", "signatures", "signature"].includes(section.id);
+      const heading = isStructural || /^\s*(?:article\s+\d+|\d+(?:\.\d+)*)\b/i.test(section.title)
+        ? section.title
+        : `Article ${++articleNumber} — ${section.title}`;
       children.push(
-        new Paragraph({ text: section.title, heading: HeadingLevel.HEADING_1 }),
+        new Paragraph({
+          text: heading,
+          heading: HeadingLevel.HEADING_1,
+          keepNext: true,
+          spacing: { before: 240, after: 100 },
+        }),
       );
       for (const line of section.body.split("\n"))
         children.push(
@@ -405,13 +429,31 @@ export function registerGeneratorRoutes(
       styles: {
         default: {
           document: {
-            run: { font: "Calibri", size: 22 },
-            paragraph: { spacing: { after: 120 } },
+            run: { font: "Cambria", size: 22 },
+            paragraph: { spacing: { after: 140, line: 276 } },
           },
         },
       },
       sections: [
         {
+          properties: {
+            page: {
+              size: { width: 11906, height: 16838 },
+              margin: { top: 1417, right: 1417, bottom: 1417, left: 1417, header: 708, footer: 708 },
+            },
+          },
+          headers: {
+            default: new Header({
+              children: [new Paragraph({
+                alignment: AlignmentType.RIGHT,
+                children: [new TextRun({
+                  text: `${draft.content.title} · Rév. ${draft.revision}`,
+                  color: "777777",
+                  size: 16,
+                })],
+              })],
+            }),
+          },
           footers: {
             default: new Footer({
               children: [

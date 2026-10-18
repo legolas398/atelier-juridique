@@ -371,6 +371,14 @@ test("Arrêt et reprise : résultats partiels préservés, statuts interrompus a
   const dir = await mkdtemp(join(tmpdir(), "atelier-recovery-"));
   const first = createApplication({ dataDir: dir });
   const review = first.store.all("reviews")[0];
+  const examples = first.store.all("legal_drafts");
+  assert.equal(examples.length, 3);
+  assert.deepEqual(
+    examples.map((draft) => draft.templateId).sort(),
+    ["fr-consortium-digital", "fr-data-sharing", "fr-poc-services"].sort(),
+  );
+  assert.ok(examples.every((draft) => draft.legal.blockingCount === 0));
+  assert.ok(examples.every((draft) => draft.content.sections.length >= 7));
   first.store.put(
     "runs",
     {
@@ -389,6 +397,7 @@ test("Arrêt et reprise : résultats partiels préservés, statuts interrompus a
     "interrupted",
   );
   assert.equal(second.store.all("cells").length, 15);
+  assert.equal(second.store.all("legal_drafts").length, 3);
   await second.close();
   await rm(dir, { recursive: true, force: true });
 });

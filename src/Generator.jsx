@@ -617,6 +617,21 @@ export default function Generator({
             </div>
           </div>
           <div className="document-generation-layout">
+            <aside className="document-outline" aria-label="Plan du document">
+              <span className="eyebrow">VOTRE DOCUMENT</span>
+              <strong>Plan des clauses</strong>
+              <small>{output.content.sections.length} sections · {output.content.sections.reduce((n, section) => n + (overrides[section.id] ?? section.body).trim().split(/\s+/).filter(Boolean).length, 0)} mots</small>
+              <nav>
+                {output.content.sections.map((section, i) => (
+                  <button key={section.id} onClick={() => document.getElementById(`clause-${section.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}>
+                    <span>{String(i + 1).padStart(2, "0")}</span>
+                    <span>{section.title}<small>{Object.hasOwn(overrides, section.id) ? "Modifiée" : "À relire"}</small></span>
+                    <ChevronRight size={14} />
+                  </button>
+                ))}
+              </nav>
+              <div className="outline-hint"><ShieldCheck size={15} /> Les contrôles et les sources sont regroupés dans le panneau de droite.</div>
+            </aside>
             <div className="generated-paper">
               <div className="generated-paper-cover">
                 <span className="eyebrow">
@@ -636,7 +651,7 @@ export default function Generator({
                 </div>
               </div>
               {output.content.sections.map((section, i) => (
-                <article className="generated-clause" key={section.id}>
+                <article className="generated-clause" id={`clause-${section.id}`} key={section.id}>
                   <header>
                     <span className="clause-number">
                       {String(i + 1).padStart(2, "0")}

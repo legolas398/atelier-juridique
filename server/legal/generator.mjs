@@ -64,6 +64,18 @@ export function generateDocument(
     if (answers.invoiceType === "periodic") required.add("schedule");
     if (answers.personalData === "yes") required.add("dpaText");
   }
+  if (
+    template.id === "fr-cgv-b2b-services" &&
+    answers.invoiceType === "monthly" &&
+    Number(answers.paymentDays) > 45
+  )
+    issue(
+      "periodic-payment-cgv",
+      "blocking",
+      "Pour une facture périodique, le délai ne peut dépasser 45 jours à compter de son émission. Vérifiez le point de départ et les modalités applicables à votre situation.",
+      "paymentDays",
+      ["payment"],
+    );
   if (answers.forumCity) required.add("bothCommercial");
   const invalid = new Set();
   for (const f of template.fields) {

@@ -16,7 +16,7 @@ const generate = (id, extra = {}) =>
     "2026-10-18",
   );
 
-test("Les douze nouvelles trames sont enregistrables et exportables en Word par les vraies API", async () => {
+test("Les nouvelles trames sont enregistrables et exportables en Word par les vraies API", async () => {
   const directory = await mkdtemp(join(tmpdir(), "atelier-catalogue-")),
     instance = createApplication({
       dataDir: directory,
@@ -67,9 +67,9 @@ test("Les douze nouvelles trames sont enregistrables et exportables en Word par 
   }
 });
 
-test("Catalogue : seize modèles distincts, douze nouveaux questionnaires complets et sourcés", () => {
-  assert.equal(BUILTIN_TEMPLATES.length, 16);
-  assert.equal(new Set(BUILTIN_TEMPLATES.map((t) => t.id)).size, 16);
+test("Catalogue : vingt-quatre modèles distincts, vingt nouveaux questionnaires complets et sourcés", () => {
+  assert.equal(BUILTIN_TEMPLATES.length, 24);
+  assert.equal(new Set(BUILTIN_TEMPLATES.map((t) => t.id)).size, 24);
   const signatures = new Set();
   for (const id of Object.keys(fixtures)) {
     const output = generate(id);
@@ -96,7 +96,7 @@ test("Catalogue : seize modèles distincts, douze nouveaux questionnaires comple
       `${id}: un questionnaire incomplet doit bloquer la relecture`,
     );
   }
-  assert.equal(signatures.size, 12);
+  assert.equal(signatures.size, 20);
 });
 test("Contrôles de fond : RGPD, sous-traitance, droits, préavis et recette", () => {
   const dpa = generate("fr-dpa");

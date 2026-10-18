@@ -762,6 +762,246 @@ export function extendedTemplates({ field, commonFields, version }) {
         "Assurance et prise en charge des frais adaptées ; aucun transfert de propriété.",
       ],
     },
+    {
+      id: "fr-training-agreement",
+      title: "Convention de formation professionnelle",
+      family: "Formation & sous-traitance",
+      tag: "Programme · durée · financement",
+      description: "Formaliser une action de formation entre un organisme et une entreprise cliente, avec programme, calendrier, prix et suivi.",
+      roles: ["Organisme de formation", "Entreprise cliente"],
+      sources: ["trainingModels"],
+      fields: [
+        ...dates,
+        f("trainingTitle", "Intitulé et finalité opérationnelle", "Action de formation", "text"),
+        f("objectives", "Objectifs pédagogiques évaluables et compétences visées", "Action de formation"),
+        f("program", "Programme détaillé, séquences, méthodes et moyens pédagogiques", "Action de formation"),
+        f("audience", "Public visé, effectif, prérequis et modalités d’inscription", "Participants"),
+        f("trainer", "Intervenants, qualifications et remplacements prévus", "Participants"),
+        f("delivery", "Présentiel, distanciel ou mixte ; lieu, outils, assistance et accessibilité", "Modalités"),
+        f("schedule", "Durée totale en heures, dates, horaires et séquencement", "Modalités"),
+        f("assessment", "Évaluation des acquis, suivi d’assiduité et justificatifs remis", "Modalités"),
+        f("price", "Prix HT, TVA ou fondement déclaré de l’exonération", "Conditions financières", "money"),
+        f("expenses", "Frais annexes, déplacements et prise en charge", "Conditions financières"),
+        f("paymentTerms", "Facturation, échéances et pièces justificatives", "Conditions financières"),
+        f("cancellation", "Report, annulation, interruption et conséquences financières selon le régime applicable", "Annulation"),
+        f("funding", "Financeur éventuel, accord préalable et traitement d’un refus de prise en charge", "Financement"),
+      ],
+      checks: [
+        "Programme, public, durée, calendrier, modalités de suivi et prix cohérents entre eux.",
+        "Le statut des parties, le financement, les règles applicables aux bénéficiaires et les modèles DREETS à jour sont vérifiés.",
+        "Aucune prise en charge, exonération de TVA, certification ou conformité à un financeur n’est présumée par la trame.",
+      ],
+    },
+    {
+      id: "fr-training-subcontract",
+      title: "Sous-traitance d’une action de formation",
+      family: "Formation & sous-traitance",
+      tag: "Mission · contrôle · justificatifs",
+      description: "Décrire précisément le lot pédagogique confié, les obligations documentaires, le prix et le contrôle de réalisation.",
+      roles: ["Donneur d’ordre", "Organisme sous-traitant"],
+      sources: ["trainingModels", "subcontract"],
+      fields: [
+        ...reference,
+        ...dates,
+        f("trainingTitle", "Action, client final et référence de l’opération principale", "Périmètre"),
+        f("module", "Module confié, objectifs, séquences et livrables pédagogiques", "Mission"),
+        f("audience", "Public, effectif, prérequis et informations à transmettre", "Participants"),
+        f("trainer", "Intervenants, qualifications, remplacement et validation préalable", "Réalisation"),
+        f("delivery", "Lieu ou plateforme, calendrier, moyens et accessibilité", "Réalisation"),
+        f("attendance", "Assiduité, feuilles de présence, évaluations et justificatifs à produire", "Suivi & preuves"),
+        f("quality", "Contrôle qualité, réclamations, incidents et coopération avec le client final", "Suivi & preuves"),
+        f("price", "Prix HT et régime de TVA déclaré", "Conditions financières", "money"),
+        f("paymentTerms", "Facturation et échéances, sous réserve du régime applicable", "Conditions financières"),
+        f("materials", "Supports, droits d’utilisation, documents remis et propriété intellectuelle", "Données & droits"),
+        f("data", "Données des participants, accès, confidentialité et mesures de sécurité", "Données & droits"),
+        f("statusChecks", "Numéro de déclaration d’activité, certifications et habilitations lorsqu’elles sont pertinentes", "Vérifications"),
+        f("termination", "Suspension, remplacement ou arrêt de la mission et remise des justificatifs", "Fin de mission"),
+      ],
+      checks: [
+        "Le lot sous-traité, le lien avec le contrat principal, les responsabilités et les preuves de réalisation sont délimités.",
+        "Les déclarations d’activité, exigences du financeur, certifications et chaînes de sous-traitance sont contrôlées sur pièces.",
+        "Les règles d’accès, de confidentialité, de données et de propriété des supports sont adaptées aux pratiques des parties.",
+      ],
+    },
+    {
+      id: "fr-patent-license",
+      title: "Contrat de licence d’exploitation de brevet",
+      family: "Propriété intellectuelle",
+      tag: "Titre · territoire · redevances",
+      description: "Structurer une négociation de licence de brevet autour du titre, des actes autorisés, du périmètre, des redevances et du suivi.",
+      roles: ["Concédant", "Licencié"],
+      sources: ["patentLicense"],
+      fields: [
+        ...dates,
+        f("patentTitle", "Numéro, titre, pays, statut et échéance du brevet", "Titres concernés"),
+        f("ownership", "Titularité, copropriété, sûretés, licences antérieures et justificatifs", "Titres concernés"),
+        f("licensedActs", "Actes d’exploitation autorisés : fabriquer, utiliser, offrir, vendre, importer ou autres", "Droits concédés"),
+        f("fieldOfUse", "Produits, procédés, applications et domaine d’utilisation", "Droits concédés"),
+        f("territory", "Territoires et pays couverts, avec exclusions", "Périmètre"),
+        f("exclusivity", "Licence exclusive, non exclusive ou sole ; réserves d’exploitation du concédant", "Périmètre", "select", { options: [["exclusive", "Exclusive"], ["sole", "Sole avec réserve explicite"], ["nonexclusive", "Non exclusive"]] }),
+        f("sublicense", "Sous-licences, sociétés affiliées, distributeurs et autorisations requises", "Périmètre"),
+        f("royalty", "Redevance, assiette, devise, taux et événements déclencheurs", "Redevances"),
+        f("minimums", "Minimums garantis, avances, jalons et règles d’imputation", "Redevances"),
+        f("reporting", "États de ventes, périodicité, pièces justificatives et audit contradictoire", "Redevances"),
+        f("improvements", "Améliorations, perfectionnements, inventions et droits de chaque partie", "Développements"),
+        f("infringement", "Notification des atteintes, coopération, coûts et conduite des actions", "Protection du titre"),
+        f("quality", "Normes de qualité, conformité des produits et usage des mentions de brevet", "Exploitation"),
+        f("registration", "Formalités, inscriptions, taxes et répartition des coûts", "Fin de licence"),
+        f("termination", "Durée, renouvellement, résiliation et sort des stocks ou sous-licences", "Fin de licence"),
+      ],
+      checks: [
+        "Le titre, les territoires, les actes autorisés, l’exclusivité et les éventuelles sous-licences sont précisément délimités.",
+        "La titularité, la validité, les inscriptions, les cotitulaires, les droits antérieurs et les formalités sont examinés sur pièces.",
+        "La redevance et l’audit sont vérifiables ; aucune garantie sur la validité ou la liberté d’exploitation du brevet n’est présumée.",
+      ],
+    },
+    {
+      id: "fr-cgv-b2b-services",
+      title: "Conditions de vente B2B · prestations de services",
+      family: "Vente & distribution",
+      tag: "Prix · commande · paiement",
+      description: "Préparer une base de conditions de vente destinée à une clientèle professionnelle, à articuler avec les commandes et conditions particulières.",
+      roles: ["Prestataire / vendeur", "Client professionnel"],
+      sources: ["cgv", "payment", "recovery"],
+      fields: [
+        f("service", "Nature, périmètre et limites des prestations proposées", "Offre", "textarea"),
+        f("orderProcess", "Devis, commande, acceptation, durée de validité et priorité des documents", "Commande"),
+        f("pricing", "Barème HT, unités, frais, remises et durée de validité", "Prix"),
+        f("delivery", "Date ou délai d’exécution, dépendances client et modalités de réception", "Exécution"),
+        f("invoiceType", "Rythme de facturation", "Paiement", "select", { options: [["completion", "À l’achèvement"], ["monthly", "Périodique / mensuelle"], ["milestone", "Par jalons définis"]] }),
+        f("paymentDays", "Délai et point de départ ; respecter le plafond légal et le régime des factures périodiques", "Paiement", "integer", { min: 1, max: 60 }),
+        f("lateInterest", "Taux de pénalités de retard et méthode de calcul, à vérifier au regard du minimum légal en vigueur", "Paiement"),
+        f("recoveryFee", "Indemnité forfaitaire légale de recouvrement applicable aux opérations concernées", "Paiement"),
+        f("discount", "Escompte pour paiement anticipé ou indiquer « aucun »", "Prix"),
+        f("warranty", "Garanties contractuelles et garanties légales applicables au service", "Garanties"),
+        f("complaint", "Réclamations, délai de signalement, coopération et corrections", "Exécution"),
+        f("personalData", "Traitement éventuel de données personnelles et référence à l’accord de sous-traitance séparé", "Données"),
+        f("termination", "Durée, renouvellement éventuel, suspension et résiliation", "Fin du contrat"),
+      ],
+      checks: [
+        "La trame est limitée aux relations entre professionnels ; aucune clause consommateur, vente à distance B2C ou rétractation n’est présumée.",
+        "Délais, taux de pénalité, indemnité de recouvrement, barème et escompte sont vérifiés selon le texte applicable et le type de facture.",
+        "La hiérarchie entre CGV, devis, commande, contrat-cadre et conditions particulières est définie et portée à la connaissance du client.",
+      ],
+    },
+    {
+      id: "fr-consortium-digital",
+      title: "Accord de consortium pour un projet numérique",
+      family: "Innovation & partenariats",
+      tag: "Projet commun · gouvernance · propriété intellectuelle",
+      description: "Organiser un projet collaboratif entre partenaires : gouvernance, lots, financement, connaissances antérieures et résultats.",
+      roles: ["Coordinateur du consortium", "Partenaire du projet"],
+      sources: ["consortium", "ipAssignment", "confidentiality"],
+      fields: [
+        ...dates,
+        f("project", "Nom, objectifs, périmètre et résultats attendus du projet", "Projet", "textarea"),
+        f("partners", "Liste des partenaires, rôles, coordonnées et représentants habilités", "Partenaires", "textarea"),
+        f("governance", "Comité, décisions, quorum, escalade et comptes rendus", "Gouvernance", "textarea"),
+        f("workPackages", "Lots, responsable de lot, livrables, jalons et dépendances", "Réalisation", "textarea"),
+        f("budget", "Budget par partenaire, contributions, versements et justificatifs", "Financement", "textarea"),
+        f("backgroundIp", "Connaissances antérieures, logiciels, données et droits mis à disposition", "Propriété intellectuelle", "textarea"),
+        f("resultsIp", "Régime d’attribution, copropriété, exploitation et licences sur les résultats", "Propriété intellectuelle", "textarea"),
+        f("publication", "Règles de publication, revue préalable et protection des informations", "Diffusion", "textarea"),
+        f("confidentiality", "Informations confidentielles, exceptions, durée et personnes autorisées", "Confidentialité", "textarea"),
+        f("dataSecurity", "Données et mesures de sécurité ; rôles RGPD et accord séparé si nécessaire", "Données", "textarea"),
+        f("liability", "Responsabilités, assurances, plafonds envisagés et exclusions à examiner", "Responsabilité", "textarea"),
+        f("partnerExit", "Retrait, défaillance, remplacement, continuité et droits sur les résultats", "Sortie", "textarea"),
+        f("dispute", "Procédure d’escalade et mode de règlement des différends", "Gouvernance", "textarea"),
+      ],
+      checks: [
+        "La gouvernance, les décisions réservées, les lots et les apports de chaque partenaire sont cohérents avec le projet.",
+        "Les connaissances antérieures sont identifiées séparément des résultats ; les droits d’accès et d’exploitation sont vérifiés par livrable.",
+        "Le régime des aides, marchés publics, subventions, données personnelles, exportations et règles propres aux organismes publics est vérifié si pertinent.",
+      ],
+    },
+    {
+      id: "fr-research-collaboration",
+      title: "Contrat de collaboration de recherche",
+      family: "Innovation & partenariats",
+      tag: "Apports · résultats · publications",
+      description: "Cadrer une recherche collaborative : contributions, gouvernance, propriété des résultats, accès et publication.",
+      roles: ["Partenaire académique", "Partenaire industriel"],
+      sources: ["researchCollaboration", "consortium", "ipAssignment"],
+      fields: [
+        ...dates,
+        f("researchSubject", "Question scientifique, objectifs, périmètre et exclusions", "Projet", "textarea"),
+        f("researchPartners", "Équipes, responsables scientifiques, établissements et contacts", "Partenaires", "textarea"),
+        f("researchContributions", "Personnel, équipements, données, financements et apports intellectuels de chaque partenaire", "Contributions", "textarea"),
+        f("researchPlan", "Lots de travail, méthodes, calendrier, jalons et livrables", "Réalisation", "textarea"),
+        f("researchGovernance", "Comité de pilotage, décisions, escalade et suivi scientifique", "Gouvernance", "textarea"),
+        f("priorKnowledge", "Connaissances antérieures, titres, logiciels, savoir-faire et restrictions d’accès", "Propriété intellectuelle", "textarea"),
+        f("researchResults", "Règle d’attribution selon les contributions et régime des résultats propres ou communs", "Résultats", "textarea"),
+        f("researchLicenses", "Droits d’accès pour poursuivre les travaux et conditions d’exploitation des résultats", "Résultats", "textarea"),
+        f("researchPublication", "Relecture des publications, délais, confidentialité et protection préalable des résultats", "Publication", "textarea"),
+        f("researchData", "Jeux de données, provenance, droits, qualité, conservation et accès", "Données", "textarea"),
+        f("researchEthics", "Éthique, autorisations, comité compétent, participants ou matériel réglementé le cas échéant", "Conformité", "textarea"),
+        f("researchFunding", "Budget, appels à projets, aides, justificatifs et conséquences d’un financement refusé", "Financement", "textarea"),
+        f("researchExit", "Arrêt, retrait, continuité, conservation des données et droits survivants", "Fin du projet", "textarea"),
+      ],
+      checks: [
+        "Les apports et ressources sont attribués à chaque partenaire ; vérifier les règles internes et la capacité des organismes à contracter.",
+        "Distinguer connaissances antérieures, résultats propres et résultats communs ; définir les droits d’accès et d’exploitation par catégorie.",
+        "Vérifier les règles des financeurs, aides d’État, publications, éthique, données personnelles, sécurité et éventuels régimes sectoriels.",
+      ],
+    },
+    {
+      id: "fr-data-sharing",
+      title: "Accord de partage de données entre organismes",
+      family: "Données & numérique",
+      tag: "Responsabilités · accès · réutilisation",
+      description: "Documenter un partage de données entre organismes et répartir les tâches, contrôles, accès, durées et responsabilités.",
+      roles: ["Organisme transmetteur", "Organisme destinataire"],
+      sources: ["dataSharing", "privacy"],
+      fields: [
+        ...dates,
+        f("sharingPurpose", "Finalité précise du partage et résultats attendus", "Objet du partage", "textarea"),
+        f("sharingData", "Catégories de données, format, volume, fréquence et provenance", "Données", "textarea"),
+        f("sharingSubjects", "Personnes concernées et données exclues du partage", "Données", "textarea"),
+        f("sharingRoles", "Analyse des rôles de chaque organisme pour chaque opération : responsable distinct, conjoint ou sous-traitant", "Rôles et responsabilités", "textarea"),
+        f("sharingLawfulBasis", "Base légale, compatibilité de la réutilisation, information et droits des personnes à vérifier", "Licéité et transparence", "textarea"),
+        f("sharingAccess", "Utilisateurs habilités, authentification, finalités autorisées et interdiction de réidentification", "Accès et sécurité", "textarea"),
+        f("sharingSecurity", "Mesures de sécurité, chiffrement, journalisation, sauvegarde et gestion des incidents", "Accès et sécurité", "textarea"),
+        f("sharingIncidents", "Contacts, délai d’alerte, contenu des notifications et coopération", "Incidents", "textarea"),
+        f("sharingRetention", "Durée d’accès, conservation, archivage, suppression et preuve d’effacement", "Cycle de vie", "textarea"),
+        f("sharingSubsequentUse", "Réutilisations, communications ultérieures, publications et autorisations requises", "Réutilisation", "textarea"),
+        f("sharingCosts", "Coûts de préparation, mise à jour, support et modalités financières", "Conditions opérationnelles", "textarea"),
+        f("sharingEnd", "Suspension, retrait d’accès, restitution et continuité des traitements licites", "Fin du partage", "textarea"),
+      ],
+      checks: [
+        "Qualifier les rôles traitement par traitement : ce document ne remplace pas un accord article 26 ou un contrat article 28 lorsqu’ils sont requis.",
+        "Documenter la base légale, la compatibilité des finalités, l’information des personnes, les droits, la provenance et la qualité des données.",
+        "Exclut données de santé, données pénales, transferts hors EEE et secteurs réglementés ; prévoir une analyse dédiée avant tout partage de ce type.",
+      ],
+    },
+    {
+      id: "fr-poc-services",
+      title: "Contrat de pilote / preuve de concept",
+      family: "Numérique & prestations",
+      tag: "Périmètre limité · critères de test · sortie",
+      description: "Encadrer un pilote court sans confondre évaluation, mise en production et engagement de déploiement ultérieur.",
+      roles: ["Prestataire pilote", "Client testeur"],
+      sources: ["cgv", "cloudClauses"],
+      fields: [
+        ...dates,
+        f("pocSolution", "Solution, service et version testés ; éléments inclus et exclus", "Périmètre du pilote", "textarea"),
+        f("pocUseCase", "Cas d’usage, utilisateurs, environnement et scénario d’évaluation", "Périmètre du pilote", "textarea"),
+        f("pocDeliverables", "Livrables, accès, documentation et jalons de remise", "Réalisation", "textarea"),
+        f("pocSuccess", "Critères mesurables de succès, protocole de test et modalités de constat", "Évaluation", "textarea"),
+        f("pocClientDuties", "Données, accès, interlocuteurs, prérequis et coopération attendue du client", "Prérequis", "textarea"),
+        f("pocData", "Données utilisées, autorisations, rôles RGPD, mesures de sécurité et environnement", "Données & sécurité", "textarea"),
+        f("pocPrice", "Prix du pilote, frais, gratuité éventuelle et calendrier de facturation", "Conditions financières", "textarea"),
+        f("pocIp", "Propriété des éléments préexistants, configurations, retours et développements spécifiques", "Droits", "textarea"),
+        f("pocSupport", "Support, niveaux de service pendant le test, maintenance et incidents", "Exploitation", "textarea"),
+        f("pocProduction", "Conditions séparées de production, renouvellement ou extension ; absence d’engagement automatique", "Après le pilote", "textarea"),
+        f("pocExit", "Fin du test, désactivation des accès, restitution ou suppression des données et livrables conservés", "Après le pilote", "textarea"),
+        f("pocLiability", "Assurances, responsabilités, limites envisagées et risques exclus à examiner", "Responsabilité", "textarea"),
+      ],
+      checks: [
+        "Le pilote est borné par un objet, une durée, un environnement, des utilisateurs et des critères de sortie vérifiables.",
+        "Ne pas utiliser de données réelles avant validation des droits, rôles RGPD, sécurité et obligations de confidentialité.",
+        "Aucun engagement de disponibilité en production, de résultat commercial, d’achat ultérieur ou de transfert de droits n’est présumé.",
+      ],
+    },
   ];
   return definitions.map((d) => ({
     id: d.id,
@@ -843,6 +1083,65 @@ export function extendedClauses(
       ["amendment"],
     );
   switch (template.id) {
+    case "fr-training-agreement":
+      s("training-program", "Objet et programme de l’action", `L’organisme de formation réalise au bénéfice de l’entreprise l’action « ${v("trainingTitle")} ». Objectifs : ${v("objectives")}. Programme, séquences et moyens : ${v("program")}. Public et prérequis : ${v("audience")}.`, ["trainingModels"]);
+      s("training-delivery", "Organisation, durée et suivi", `Période : du ${d("startDate")} au ${d("endDate")}. Modalités, lieu et accessibilité : ${v("delivery")}. Durée, dates et horaires : ${v("schedule")}. Intervenants : ${v("trainer")}. Évaluation des acquis et justificatifs d’assiduité remis : ${v("assessment")}.`);
+      s("training-price", "Prix, facturation et financement", `Prix : ${m("price")} HT. Frais annexes : ${v("expenses")}. Facturation et paiement : ${v("paymentTerms")}. Financeur éventuel et conséquence d’un refus de prise en charge : ${v("funding")}. Les obligations fiscales et les règles du financeur restent à contrôler selon la situation réelle.`, ["trainingModels"]);
+      s("training-cancellation", "Report, annulation et interruption", `Les parties appliquent les modalités suivantes, sous réserve des dispositions impératives et du statut du bénéficiaire : ${v("cancellation")}. Toute modification du calendrier ou du programme est documentée par écrit.`);
+      break;
+    case "fr-training-subcontract":
+      s("training-subcontract-scope", "Périmètre pédagogique confié", `Dans le cadre de ${v("contractTitle")}, conclu le ${d("contractDate")}, le donneur d’ordre confie au sous-traitant le module suivant : ${v("module")}. Action et client final : ${v("trainingTitle")}. Période prévisionnelle : du ${d("startDate")} au ${d("endDate")}. Le sous-traitant n’excède pas ce périmètre sans accord écrit.` , ["trainingModels", "subcontract"]);
+      s("training-subcontract-delivery", "Intervenants, réalisation et traçabilité", `Public et prérequis : ${v("audience")}. Intervenants : ${v("trainer")}. Modalités, lieu et calendrier : ${v("delivery")}. Le sous-traitant remet les justificatifs suivants : ${v("attendance")}. Contrôle qualité, incidents et coopération : ${v("quality")}. Les parties vérifient les exigences propres au financeur et au régime applicable.`);
+      s("training-subcontract-price", "Prix et règlement", `Prix déclaré : ${m("price")} HT ; échéances et facturation : ${v("paymentTerms")}. Le traitement de la TVA, les éventuels frais et les pièces nécessaires au règlement sont vérifiés avant émission des factures.`);
+      s("training-subcontract-rights", "Supports, données et exigences de statut", `Supports et droits d’utilisation : ${v("materials")}. Données des participants, confidentialité et sécurité : ${v("data")}. Vérifications déclarées : ${v("statusChecks")}. Chaque partie conserve la responsabilité de ses déclarations et justificatifs. Les obligations réglementaires ne sont pas certifiées par cette trame.`, ["trainingModels"]);
+      s("training-subcontract-end", "Suspension et fin de mission", `En cas de difficulté, remplacement ou arrêt, les parties conviennent de : ${v("termination")}. Le sous-traitant remet les justificatifs et supports contractuellement prévus, sous réserve des droits applicables.`);
+      break;
+    case "fr-patent-license":
+      s("patent-identification", "Brevet et chaîne de titularité", `Le titre visé est : ${v("patentTitle")}. Le concédant déclare la situation suivante, justificatifs à l’appui : ${v("ownership")}. Les parties vérifient les cotitulaires, sûretés, licences antérieures, annuités, inscriptions et territoire du titre. Aucune garantie de validité ou de liberté d’exploitation n’est créée par la présente trame.`, ["patentLicense"]);
+      s("patent-grant", "Droits concédés et périmètre", `Le concédant autorise les actes suivants : ${v("licensedActs")}, pour le domaine : ${v("fieldOfUse")}, sur le territoire : ${v("territory")}, du ${d("startDate")} au ${d("endDate")}. Régime d’exclusivité convenu : ${v("exclusivity")}. Sous-licences et bénéficiaires autorisés : ${v("sublicense")}. Toute extension requiert un écrit.`);
+      s("patent-royalties", "Redevances, comptes et vérification", `Redevance et assiette : ${v("royalty")}. Minimums garantis et avances : ${v("minimums")}. Le licencié remet les états de ventes et pièces selon les modalités suivantes : ${v("reporting")}. L’audit, la confidentialité des données commerciales et la régularisation d’écarts sont précisés avant signature.`, ["patentLicense"]);
+      s("patent-operation", "Qualité, atteintes et développements", `Normes et contrôle qualité : ${v("quality")}. Notification et conduite en cas d’atteinte : ${v("infringement")}. Régime des améliorations et perfectionnements : ${v("improvements")}. Chaque partie documente les droits détenus sur ses contributions.`);
+      s("patent-end", "Formalités et fin de licence", `Inscriptions, taxes et coûts : ${v("registration")}. Durée, renouvellement, résiliation et sort des stocks ou sous-licences : ${v("termination")}. Les parties vérifient les formalités d’inscription au registre compétent et les effets de la fin sur les tiers.`, ["patentLicense"]);
+      break;
+    case "fr-cgv-b2b-services":
+      s("cgv-scope", "Champ d’application et hiérarchie contractuelle", `Ces conditions sont destinées à une relation entre professionnels pour les prestations suivantes : ${v("service")}. La commande, le devis et les conditions particulières s’articulent selon la règle suivante : ${v("orderProcess")}. Le client déclare contracter pour les besoins de son activité professionnelle.`, ["cgv"]);
+      s("cgv-order", "Commande et prix", `Barème HT, unités, frais, remises et durée de validité : ${v("pricing")}. La commande est formée et acceptée selon : ${v("orderProcess")}. Toute dérogation aux présentes est identifiée par écrit dans les conditions particulières acceptées par les parties.`);
+      s("cgv-execution", "Exécution et réclamations", `Délais, dépendances et réception : ${v("delivery")}. Les réclamations et corrections sont traitées selon : ${v("complaint")}. Les garanties applicables et leur portée sont décrites comme suit, sous réserve des garanties légales : ${v("warranty")}.`);
+      s("cgv-payment", "Facturation et retard de paiement", `Rythme de facturation : ${v("invoiceType")}. Délai convenu : ${v("paymentDays")} jours, sous réserve des plafonds et régimes spéciaux applicables. Pénalités de retard : ${v("lateInterest")}. Indemnité forfaitaire de recouvrement : ${v("recoveryFee")}. Escompte : ${v("discount")}. Les taux, délais et montants sont à contrôler à la date de communication et selon la nature de chaque opération.`, ["payment", "recovery"]);
+      s("cgv-data", "Données, durée et fin de la relation", `Traitements de données éventuels : ${v("personalData")}. Durée, renouvellement, suspension et résiliation : ${v("termination")}. Si un traitement est effectué pour le compte du client, une annexe dédiée doit préciser les obligations et instructions applicables.`, ["cgv", "privacy"]);
+      break;
+    case "fr-consortium-digital":
+      s("consortium-project", "Projet et partenaires", `Les partenaires organisent le projet « ${v("project")} ». Les partenaires et leurs représentants sont décrits ainsi : ${v("partners")}. Le projet est prévu du ${d("startDate")} au ${d("endDate")}. Chaque partenaire confirme ses pouvoirs et ses engagements propres, à documenter avant signature.`, ["consortium"]);
+      s("consortium-governance", "Gouvernance et décisions", `Le pilotage, les décisions, les règles de quorum, l’escalade et les comptes rendus sont organisés ainsi : ${v("governance")}. Les partenaires consignent les décisions qui modifient le périmètre, les coûts ou les livrables.`);
+      s("consortium-work", "Lots, jalons et financement", `Lots, responsabilités, livrables et dépendances : ${v("workPackages")}. Budget, contributions, versements et justificatifs : ${v("budget")}. Les écarts au calendrier et au budget font l’objet d’une décision documentée des partenaires.`);
+      s("consortium-ip", "Connaissances antérieures et résultats", `Connaissances antérieures et droits d’accès : ${v("backgroundIp")}. Attribution, copropriété et exploitation des résultats : ${v("resultsIp")}. Les parties établissent des annexes par actif ou livrable et vérifient les droits des salariés, auteurs, sous-traitants et financeurs avant toute exploitation.`, ["consortium", "ipAssignment"]);
+      s("consortium-publication", "Publication et confidentialité", `Règles de revue préalable et de publication : ${v("publication")}. Informations protégées, exceptions, durée et personnes autorisées : ${v("confidentiality")}. Toute publication est coordonnée avec la protection préalable des résultats et les obligations des financeurs.`, ["consortium", "confidentiality"]);
+      s("consortium-data", "Données, sécurité et responsabilité", `Données et mesures de sécurité convenues : ${v("dataSecurity")}. Les rôles de responsable et sous-traitant, les transferts et les accords requis sont déterminés séparément au regard des traitements réels. Responsabilités, assurances et plafonds envisagés : ${v("liability")}.`);
+      s("consortium-exit", "Retrait, défaillance et différends", `Retrait, remplacement, continuité et droits sur les résultats : ${v("partnerExit")}. Escalade et règlement des différends : ${v("dispute")}. Les droits acquis, financements, matériels et obligations survivantes sont traités dans un plan de sortie adapté.`);
+      break;
+    case "fr-research-collaboration":
+      s("research-object", "Objet scientifique, partenaires et durée", `Les partenaires conduisent le projet suivant : ${v("researchSubject")}. Équipes et responsables : ${v("researchPartners")}. La période envisagée court du ${d("startDate")} au ${d("endDate")}. Le périmètre, les exclusions et les autorisations nécessaires sont arrêtés avant le démarrage.`, ["researchCollaboration"]);
+      s("research-inputs", "Contributions, plan de travail et gouvernance", `Apports en personnel, équipements, données, financements et savoir-faire : ${v("researchContributions")}. Lots, méthodes, calendrier et livrables : ${v("researchPlan")}. Pilotage, décisions et suivi : ${v("researchGovernance")}. Chaque partie suit ses coûts et signale les écarts affectant le projet.`);
+      s("research-background", "Connaissances antérieures et accès", `Les connaissances, titres et restrictions apportés sont identifiés comme suit : ${v("priorKnowledge")}. Les droits d’accès sont limités aux besoins du projet et ne valent ni cession ni licence d’exploitation, sauf stipulation distincte et précise.`, ["researchCollaboration", "ipAssignment"]);
+      s("research-results", "Résultats et droits d’exploitation", `L’attribution des résultats propres ou communs est organisée ainsi : ${v("researchResults")}. Les droits nécessaires à la poursuite des travaux et à l’exploitation sont définis par catégorie : ${v("researchLicenses")}. La contribution effective, les droits des personnels, les logiciels tiers et les obligations des financeurs doivent être documentés avant toute exploitation.`, ["researchCollaboration", "ipAssignment"]);
+      s("research-publication", "Publications et protection", `Les règles de revue et de publication sont les suivantes : ${v("researchPublication")}. Elles doivent permettre la vérification des informations confidentielles et la protection des résultats sans créer de blocage indéfini à la publication scientifique.`, ["researchCollaboration", "confidentiality"]);
+      s("research-data", "Données, éthique et financement", `Données, provenance, conservation et accès : ${v("researchData")}. Autorisations et exigences éthiques : ${v("researchEthics")}. Budget, aides et conséquences d’un financement refusé : ${v("researchFunding")}. Les bases légales, accords de données, règles de sécurité et autorisations réglementaires sont examinés séparément selon le projet.`, ["privacy"]);
+      s("research-end", "Arrêt du projet et obligations survivantes", `Les modalités de retrait ou d’arrêt, la continuité et le sort des données sont : ${v("researchExit")}. Les droits acquis, obligations de confidentialité, règles d’archivage et engagements envers les financeurs survivent dans la mesure prévue par les accords applicables.`);
+      break;
+    case "fr-data-sharing":
+      s("sharing-purpose", "Objet, périmètre et durée du partage", `Le partage poursuit la finalité suivante : ${v("sharingPurpose")}. Données, format, volume, fréquence et provenance : ${v("sharingData")}. Personnes concernées et exclusions : ${v("sharingSubjects")}. Le partage est limité à la période du ${d("startDate")} au ${d("endDate")} et aux usages convenus.`, ["dataSharing"]);
+      s("sharing-roles", "Rôles, licéité et information", `Qualification des rôles pour chaque opération : ${v("sharingRoles")}. Base légale, compatibilité des finalités, information et exercice des droits à vérifier : ${v("sharingLawfulBasis")}. Les parties ne présument pas que la seule signature de cet accord rend le partage licite. Si elles déterminent conjointement les finalités et moyens, elles concluent et mettent à disposition l’accord requis ; si l’une agit sur instruction de l’autre, elles utilisent un encadrement de sous-traitance adapté.`, ["dataSharing", "privacy"]);
+      s("sharing-access", "Accès, sécurité et incidents", `Accès et usages autorisés : ${v("sharingAccess")}. Mesures de sécurité : ${v("sharingSecurity")}. Procédure de signalement et coopération : ${v("sharingIncidents")}. Chaque organisme maintient les mesures relevant de son périmètre et conserve les traces utiles à l’audit et à la gestion des incidents.`);
+      s("sharing-retention", "Conservation, réutilisation et coûts", `Conservation, archivage et effacement : ${v("sharingRetention")}. Réutilisations, communications et publications : ${v("sharingSubsequentUse")}. Coûts de préparation et de mise à jour : ${v("sharingCosts")}. Toute nouvelle finalité ou communication à un tiers exige une analyse et, le cas échéant, un accord documenté préalable.`);
+      s("sharing-end", "Suspension, fin et responsabilités", `Suspension, retrait d’accès et restitution ou suppression : ${v("sharingEnd")}. Chaque partie vérifie les responsabilités, assurances, voies d’exercice des droits et obligations réglementaires qui lui sont applicables. Les données ne sont pas transférées hors EEE ni utilisées pour des catégories exclues par la présente trame.`);
+      break;
+    case "fr-poc-services":
+      s("poc-scope", "Objet, environnement et durée du pilote", `Le pilote porte sur ${v("pocSolution")}. Cas d’usage, utilisateurs et environnement : ${v("pocUseCase")}. Il se déroule du ${d("startDate")} au ${d("endDate")}. Toute extension du périmètre ou accès à la production nécessite un accord écrit distinct.`, ["cgv"]);
+      s("poc-delivery", "Livrables, prérequis et évaluation", `Livrables et jalons : ${v("pocDeliverables")}. Le client fournit les prérequis suivants : ${v("pocClientDuties")}. Les parties évaluent le pilote selon les critères et le protocole suivants : ${v("pocSuccess")}. Les résultats sont consignés dans un compte rendu contradictoire ; aucune recette ou acceptation non définie n’est présumée.`);
+      s("poc-data", "Données et sécurité du test", `Données et conditions d’accès : ${v("pocData")}. Aucune donnée réelle n’est chargée avant validation des droits, de la sécurité, de l’information des personnes et de la qualification des rôles. Si un traitement pour compte d’autrui existe, un accord distinct conforme au régime applicable est requis.`, ["cloudClauses", "privacy"]);
+      s("poc-commercial", "Prix, support et propriété intellectuelle", `Prix, frais et facturation : ${v("pocPrice")}. Support et incidents : ${v("pocSupport")}. Droits sur les éléments préexistants, retours et développements : ${v("pocIp")}. Chaque licence ou cession doit identifier ses droits, usages, durée, territoire et rémunération lorsqu’elle est nécessaire.`);
+      s("poc-next-step", "Après le pilote, responsabilité et sortie", `Un déploiement, abonnement ou engagement d’achat fera l’objet d’un contrat ultérieur et de ses annexes : ${v("pocProduction")}. À la fin, les accès, données et livrables sont traités ainsi : ${v("pocExit")}. Responsabilités, assurances et limites envisagées : ${v("pocLiability")}. Les limitations restent soumises aux règles impératives et à une analyse du contrat complet.`, ["cgv", "essential"]);
+      break;
     case "fr-dpa":
       s(
         "processing",

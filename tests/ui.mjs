@@ -475,7 +475,7 @@ try {
           "React + JSDOM + HTTP API + SQLite ; aucun rendu visuel Chromium",
         checks: [
           "import de deux DOCX dans Comparer, redline, vue côte à côte et téléchargement Word",
-          "catalogue de seize modèles, recherche et filtrage de la licence",
+          "catalogue de vingt-quatre modèles, recherche et filtrage de la licence",
           "comparaison, décision persistée, recherche juridique et passage conservé",
           "accueil",
           "grille",

@@ -15,7 +15,7 @@ Une modification remet le document au statut projet et conserve la révision pr�
 
 ## Modèles proposés et portée
 
-La bibliothèque comporte désormais **16 trames indépendantes**, recherchables par mot et filtrables par famille. Chaque trame dispose de champs et de contrôles propres. Les rôles des deux parties sont affichés dans le questionnaire.
+La bibliothèque comporte désormais **24 trames indépendantes**, recherchables par mot et filtrables par famille. Chaque trame dispose de champs et de contrôles propres. Les rôles des deux parties sont affichés dans le questionnaire.
 
 | Nouvelle trame | Éléments spécifiques et contrôles |
 | --- | --- |
@@ -31,6 +31,14 @@ La bibliothèque comporte désormais **16 trames indépendantes**, recherchables
 | Échelonnement d’une dette échue | Origine, principal, accessoires, mensualités calculées au centime, fins de mois, impayés ; créance contestée/non vérifiée et dates incohérentes bloquantes. |
 | Procès-verbal de recette | Livrables et versions, critères et tests, décision, réserves et levée ; décision sans réserve incompatible avec des réserves décrites. |
 | Prêt gratuit de matériel | Inventaire, usage, remise, entretien, assurance, durée et restitution ; gratuité, propriété du prêteur et règles légales de reprise préservées. |
+| Convention de formation professionnelle | Objectifs, programme, public, durée, intervenants, suivi, prix, financement et annulation ; modèle public DREETS utilisé comme repère, exigences du financeur à contrôler. |
+| Sous-traitance d’une action de formation | Lot pédagogique, contrat principal, intervenants, assiduité, justificatifs, prix, données et vérification du statut. |
+| Licence de brevet | Titre, droits concédés, territoire, exclusivité, sous-licences, redevances, audit, améliorations, atteintes et formalités ; validité du titre non vérifiée automatiquement. |
+| Conditions B2B de prestations de services | Commande, hiérarchie documentaire, barème, exécution, réclamations et paiement ; exclut les consommateurs et requiert une vérification des seuils en vigueur. |
+| Accord de consortium numérique | Projet commun, partenaires, gouvernance, lots, financement, connaissances antérieures, résultats, publications, données et sortie ; modèle INPI à adapter au montage réel. |
+| Collaboration de recherche | Apports, méthodes, gouvernance scientifique, connaissances antérieures, résultats propres/communs, accès, publications, données, éthique et financement. |
+| Partage de données entre organismes | Finalités, données, rôles, licéité, accès, sécurité, incidents, conservation et réutilisation ; exclut les catégories sensibles et transferts non couverts. |
+| Pilote / preuve de concept | Périmètre court, environnement, critères mesurables, prérequis, données, droits, support, passage éventuel en production et sortie. |
 
 Les quatre trames de base et l’import de modèles de cabinet restent disponibles :
 
@@ -80,8 +88,10 @@ Consultation publique le **18/10/2026**, via les résultats indexés des sites o
 
 ## Maintenance et tests
 
+Sources ajoutées à la version 2026.10.18.5 : [Service Public Entreprendre sur les CGV](https://entreprendre.service-public.gouv.fr/vosdroits/F33527) (vérifié le 1er juillet 2026), [DREETS Bretagne sur les contrats et conventions de formation](https://bretagne.dreets.gouv.fr/Vos-documents-utiles-pour-une-declaration-d-activite) (page mise à jour le 16 avril 2025), [INPI sur les licences de brevet](https://www.inpi.fr/ressources/propriete-intellectuelle/guide-de-preparation-negociation) et [INPI sur les accords de consortium numérique](https://www.inpi.fr/ressources/propriete-intellectuelle/guide-du-consortium-dans-numerique), [INPI sur les accords de collaboration de recherche](https://www.inpi.fr/inpi-block/download-document?id=20605) (repère historique, modèle CNRS cité de 2004), [CNIL sur la répartition des responsabilités](https://www.cnil.fr/fr/droit-dacces-guichet-unique-violation-de-donnees-le-cepd-publie-de-nouvelles-lignes-directrices) et [CNIL sur les clauses cloud](https://www.cnil.fr/sites/cnil/files/typo/document/Recommandations_pour_les_entreprises_qui_envisagent_de_souscrire_a_des_services_de_Cloud.pdf). Ces sources servent de repères de contenu et de présentation ; elles ne certifient ni chaque cas d’usage ni la conformité des projets exportés.
+
 `server/legal/catalog.mjs` contient les questionnaires, références et dates de consultation ; `generator.mjs` les rédactions et contrôles ; `routes.mjs` les révisions, relectures et exports. Toute évolution des règles ou des trames doit incrémenter leur version et s'accompagner d'une relecture juridique et de tests. Ne pas modifier une date de consultation sans revoir la source et ses conséquences.
 
-Les tests backend vérifient les seize trames, l’enregistrement et le DOCX réextrait de chaque nouvelle trame, les montants, dates, cas hors périmètre, garde-fous, modèles personnalisés, révisions et invalidation d’une relecture. L’échéancier est testé avec des centimes non divisibles et des fins de mois. Le test React/JSDOM couvre le catalogue, son filtre et un NDA complet jusqu’à l’invalidation de la relecture. L’horloge juridique est figée uniquement dans les tests ; la production utilise la date courante et ne permet pas de la fournir via l’API.
+Les tests backend vérifient les vingt-quatre trames, l’enregistrement et le DOCX réextrait de chaque nouvelle trame, les montants, dates, cas hors périmètre, garde-fous, modèles personnalisés, révisions et invalidation d’une relecture. L’échéancier est testé avec des centimes non divisibles et des fins de mois. Le test React/JSDOM couvre le catalogue, son filtre et un NDA complet jusqu’à l’invalidation de la relecture. L’horloge juridique est figée uniquement dans les tests ; la production utilise la date courante et ne permet pas de la fournir via l’API.
 
 L'accès et le stockage restent ceux de l'application locale : une seule identité de session, sans collaboration d'équipe authentifiée. Les vérifications visuelles Chromium restent soumises aux restrictions Windows déjà documentées.

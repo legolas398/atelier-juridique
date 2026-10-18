@@ -6,11 +6,12 @@ import { join } from "node:path";
 import { createHash } from "node:crypto";
 import JSZip from "jszip";
 import { JSDOM } from "jsdom";
-import { Document, Packer, Paragraph } from "docx";
+import { AlignmentType, Document, Packer, Paragraph, TextRun } from "docx";
 import mammoth from "mammoth";
 import { compareDocuments } from "../server/research.mjs";
 import { comparisonWord } from "../server/redline.mjs";
 import { createApplication } from "../server/app.mjs";
+import { parseDocument } from "../server/documents.mjs";
 
 const left = [
   "CONTRAT FICTIF",
@@ -113,6 +114,31 @@ test("Word redline : vraies révisions, acceptation = révisé, rejet = original
     );
   }
 });
+test("Compare les changements de format DOCX et les exporte comme révisions Word", async () => {
+  const make = async (name, options) => {
+    const buffer = await Packer.toBuffer(new Document({
+      sections: [{ children: [new Paragraph({ children: [new TextRun({ text: "Clause de forme constante", ...(options.bold ? { bold: true } : {}) })], alignment: options.alignment })] }],
+    }));
+    return parseDocument({ originalname: name, buffer, size: buffer.length }, "matter");
+  };
+  const original = await make("original.docx", { alignment: AlignmentType.LEFT, bold: false });
+  const revised = await make("revised.docx", { alignment: AlignmentType.CENTER, bold: true });
+  assert.equal(original.pages[0].blocks[0].text, revised.pages[0].blocks[0].text);
+  const changes = compareDocuments(original, revised);
+  assert.equal(changes.length, 1);
+  assert.equal(changes[0].status, "modified");
+  assert.ok(changes[0].formatChanges.some((change) => change.label === "Alignement"));
+  assert.ok(changes[0].formatChanges.some((change) => change.label === "Gras"));
+  const buffer = await comparisonWord({ leftName: original.name, rightName: revised.name, leftHash: original.hash, rightHash: revised.hash, createdAt: "2026-10-18T12:00:00.000Z", changes });
+  const zip = await JSZip.loadAsync(buffer);
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.match(xml, /<w:pPrChange/);
+  assert.match(xml, /<w:rPrChange/);
+  assert.match(xml, /<w:jc w:val="center"/);
+  assert.equal(project(xml, true), "Clause de forme constante");
+  assert.equal(project(xml, false), "Clause de forme constante");
+});
+
 test("Import direct de deux DOCX, comparaison, export redline et refus des pièces hors dossier", async () => {
   const directory = await mkdtemp(join(tmpdir(), "atelier-redline-")),
     instance = createApplication({ dataDir: directory, demo: false }),

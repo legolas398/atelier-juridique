@@ -1,6 +1,6 @@
 import { extendedTemplates } from "./extended.mjs";
 export const LEGAL_CHECKED_AT = "2026-10-18";
-export const TEMPLATE_VERSION = "2026.10.18.2";
+export const TEMPLATE_VERSION = "2026.10.18.5";
 export const LEGAL_SOURCES = {
   subcontract: {
     id: "subcontract",
@@ -107,6 +107,55 @@ export const LEGAL_SOURCES = {
     url: "https://www.cnil.fr/fr/clauses-contractuelles-types-entre-responsable-de-traitement-et-sous-traitant",
     checkedAt: LEGAL_CHECKED_AT,
     note: "Le contrat de sous-traitance doit traiter les exigences de l’article 28 du RGPD. Les transferts internationaux appellent une analyse distincte.",
+  },
+  cgv: {
+    id: "cgv",
+    title: "Entreprendre.Service-Public · conditions générales de vente",
+    url: "https://entreprendre.service-public.gouv.fr/vosdroits/F33527",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Distinguer ventes et services, professionnel et consommateur ; traiter notamment prix, règlement, retard, garanties et obligations précontractuelles selon le contexte. Trame limitée ici aux relations B2B.",
+  },
+  consortium: {
+    id: "consortium",
+    title: "INPI · guide et accord type de consortium numérique",
+    url: "https://www.inpi.fr/ressources/propriete-intellectuelle/guide-du-consortium-dans-numerique",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Le modèle public sert de repère de structure pour le projet, la gouvernance, les apports et la propriété intellectuelle. Il doit être adapté aux partenaires, financeurs, règles d’aides et résultats réels ; il ne constitue pas une validation juridique.",
+  },
+  researchCollaboration: {
+    id: "researchCollaboration",
+    title: "INPI · collaboration de recherche et innovation collaborative",
+    url: "https://www.inpi.fr/inpi-block/download-document?id=20605",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Le guide décrit un modèle de contrat de collaboration de recherche CNRS (2004) et des accords de consortium. Source ancienne utilisée uniquement comme repère de structure ; vérifier politiques institutionnelles, financeurs et droit actuel.",
+  },
+  dataSharing: {
+    id: "dataSharing",
+    title: "CNIL · rôles et partage de responsabilités de traitement",
+    url: "https://www.cnil.fr/fr/droit-dacces-guichet-unique-violation-de-donnees-le-cepd-publie-de-nouvelles-lignes-directrices",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "L’accord doit refléter les rôles effectifs et la relation aux personnes concernées. Qualifier chaque opération ; cette trame ne remplace pas un accord de responsabilité conjointe ou un contrat de sous-traitance requis.",
+  },
+  cloudClauses: {
+    id: "cloudClauses",
+    title: "CNIL · clauses contractuelles cloud",
+    url: "https://www.cnil.fr/sites/cnil/files/typo/document/Recommandations_pour_les_entreprises_qui_envisagent_de_souscrire_a_des_services_de_Cloud.pdf",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "Les clauses publiées par la CNIL sont des repères à adapter et ne constituent pas seules un contrat de prestation. Le pilote doit être complété par le contrat principal et une annexe de traitement adaptée lorsque nécessaire.",
+  },
+  trainingModels: {
+    id: "trainingModels",
+    title: "DREETS Bretagne · modèles de contrats et conventions de formation",
+    url: "https://bretagne.dreets.gouv.fr/Vos-documents-utiles-pour-une-declaration-d-activite",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "La page publique propose des modèles Word de convention, contrat et sous-traitance de formation. S’en inspirer pour identifier les parties, la prestation, les conditions financières et les modalités d’exécution ; vérifier le régime et les versions applicables.",
+  },
+  patentLicense: {
+    id: "patentLicense",
+    title: "INPI · exemple de contrat de licence d’exploitation de brevet",
+    url: "https://www.inpi.fr/ressources/propriete-intellectuelle/guide-de-preparation-negociation",
+    checkedAt: LEGAL_CHECKED_AT,
+    note: "L’INPI publie un exemple et un guide de négociation. Identifier brevet, droits concédés, territoire, durée, exclusivité, redevances, suivi et fin de licence ; vérifier la titularité, les inscriptions et les titres concernés.",
   },
 };
 
